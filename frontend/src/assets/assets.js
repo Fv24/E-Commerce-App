@@ -4,6 +4,7 @@ import profile from './profile.png';
 import shoppingcart from './shopping-cart.png';
 import menu from './menu.png';
 import back from './back.png';
+import hero from './hero.jpg';
 
 export const assets = {
     logo,
@@ -11,7 +12,8 @@ export const assets = {
     profile,
     shoppingcart,
     menu,
-    back
+    back,
+    hero
 } 
 
 export const products = [
