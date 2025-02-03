@@ -1,7 +1,17 @@
 import logo from './logo.png';
+import search from './search.png';
+import profile from './profile.png';
+import shoppingcart from './shopping-cart.png';
+import menu from './menu.png';
+import back from './back.png';
 
 export const assets = {
-    logo
+    logo,
+    search,
+    profile,
+    shoppingcart,
+    menu,
+    back
 } 
 
 export const products = [
