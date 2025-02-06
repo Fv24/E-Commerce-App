@@ -772,7 +772,7 @@ export const products = [
         price: 70,
         image:[image54],
         category: "Furniture",
-        subCategory: "Kitchen",
+        subCategory: "Dinning Room",
         colors: ["white"],
         date: 12042025,
         bestseller:false
