@@ -65,6 +65,7 @@ import exchange from './exchange.png';
 import quality from './quality.png';
 import customersupport from './customer-support.png';
 import rightArrow from './right-arrow.png';
+import closes from './close.png';
 
 export const assets = {
     logo,
@@ -133,7 +134,8 @@ export const assets = {
     image54,
     image55,
     image56,
-    image57
+    image57,
+    closes
 } 
 
 export const products = [
@@ -812,5 +814,6 @@ export const products = [
         colors: ["gray"],
         date: 15042025,
         bestseller:false
-    }
+    },
+   
 ]
