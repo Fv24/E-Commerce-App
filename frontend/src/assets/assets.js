@@ -66,6 +66,29 @@ import quality from './quality.png';
 import customersupport from './customer-support.png';
 import rightArrow from './right-arrow.png';
 import closes from './close.png';
+import star from './star.png';
+import starnull from './starnull.png';
+import image33a from './image33a.jpg';
+import image30a from './image30a.jpg';
+import image42a from './image42a.jpg';
+import image34a from './image34a.jpg';
+import image34b from './image34b.jpg';
+import image34c from './image34c.jpg';
+import image15a from './image15a.jpg';
+import image17a from './image17a.jpg';
+import image25a from './image25a.jpg';
+import image27a from './image27a.jpg';
+import image30b from './image30b.jpg';
+import image30c from './image30c.jpg';
+import image33b from './image33b.jpg';
+import image33c from './image33c.jpg';
+import image40a from './image40a.jpg';
+import image46a from './image46a.jpg';
+import image46b from './image46b.jpg';
+import image48a from './image48a.jpg';
+import image50a from './image50a.jpg';
+import image54a from './image54a.jpg';
+import image54b from './image54b.jpg';
 
 export const assets = {
     logo,
@@ -135,7 +158,30 @@ export const assets = {
     image55,
     image56,
     image57,
-    closes
+    image33a,
+    image33b,
+    image30a,
+    image42a,
+    image34a,
+    image34b,
+    image34c,
+    image15a,
+    image17a,
+    image25a,
+    image27a,
+    image30b,
+    image30c,
+    image40a,
+    image46a,
+    image46b,
+    image48a,
+    image50a,
+    image54a,
+    image54b,
+    image33c,
+    closes,
+    star,
+    starnull
 } 
 
 export const products = [
@@ -301,7 +347,7 @@ export const products = [
         name: "Wooden chair",
         description: "A sturdy, classic seat made of wood.",
         price: 570,
-        image:[image15],
+        image:[image15,image15a],
         category: "Furniture",
         subCategory: "Living Room",
         colors: ["brown"],
@@ -325,7 +371,7 @@ export const products = [
         name: "Wooden Frame and white vase",
         description: "A clean, elegant frame and a stylish white vase for decor.",
         price: 240,
-        image:[image17],
+        image:[image17,image17a],
         category: "Accessories",
         subCategory: "Home Decor",
         colors: ["white","black"],
@@ -422,7 +468,7 @@ export const products = [
         name: "Unique form vase",
         description: "A vase with a distinctive, artistic shape that stands out as a decorative piece.",
         price: 650,
-        image:[image25],
+        image:[image25,image25a],
         category: "Accessories",
         subCategory: "Home Decor",
         colors: ["white"],
@@ -446,7 +492,7 @@ export const products = [
         name: "Dinning table",
         description: "A small table with a special design.",
         price: 3200,
-        image:[image27],
+        image:[image27,image27a],
         category: "Furniture",
         subCategory: "Dinning Room",
         colors: ["brown"],
@@ -483,7 +529,7 @@ export const products = [
         name: "Wood chair",
         description: "A uniquely designed wooden chair, crafted with attention to detail and featuring distinctive textures or shapes.",
         price: 730,
-        image:[image30],
+        image:[image30,image30a,image30b,image30c],
         category: "Furniture",
         subCategory: "Dinning Room",
         colors: ["brown"],
@@ -519,10 +565,10 @@ export const products = [
         name: "Unique form vase",
         description: "A vase with a distinctive, artistic shape that serves as both a functional container and a decorative piece, often showcasing creativity and craftsmanship.",
         price: 310,
-        image:[image33],
+        image:[image33,image33a,image33b,image33c],
         category: "Accessories",
         subCategory: "Home Decor",
-        colors: ["white"],
+        colors: ["white","creme"],
         date: 21032025,
         bestseller:false
     },
@@ -531,7 +577,7 @@ export const products = [
         name: "Special chair",
         description: "Very special chair.",
         price: 800,
-        image:[image34],
+        image:[image34,image34a,image34b,image34c],
         category: "Furniture",
         subCategory: "Living Room",
         colors: ["brown"],
@@ -603,7 +649,7 @@ export const products = [
         name: "Cozy couch",
         description: "A simple and cozy couch.",
         price: 600,
-        image:[image40],
+        image:[image40,image40a],
         category: "Furniture",
         subCategory: "Living Room",
         colors: ["creme","gray","white"],
@@ -627,7 +673,7 @@ export const products = [
         name: "Side table",
         description: "A small table used for placing decor items like vases and lamps.",
         price: 150,
-        image:[image42],
+        image:[image42,image42a],
         category: "Furniture",
         subCategory: "Living Room",
         colors: ["black"],
@@ -675,7 +721,7 @@ export const products = [
         name: "Side black table",
         description: "Simple black side table for your bedroom.",
         price: 140,
-        image:[image46],
+        image:[image46,image46a,image46b],
         category: "Furniture",
         subCategory: "Bedroom",
         colors: ["black"],
@@ -699,7 +745,7 @@ export const products = [
         name: "Modern and classic sofa",
         description:"A sofa that blends modern design with classic elements, offering both contemporary style and timeless elegance.",
         price: 1900,
-        image:[image48],
+        image:[image48,image48a],
         category: "Furniture",
         subCategory: "Living Room",
         colors: ["white"],
@@ -724,7 +770,7 @@ export const products = [
         name: "Black chair",
         description: "A simple black chair that add beautiful design to your dinning room.",
         price: 315,
-        image:[image50],
+        image:[image50,image50a],
         category: "Furniture",
         subCategory: "Dining Room",
         colors: ["black"],
@@ -772,7 +818,7 @@ export const products = [
         name: "Simple white chair",
         description: "Simple chair for your dinning room.",
         price: 70,
-        image:[image54],
+        image:[image54,image54a,image54b],
         category: "Furniture",
         subCategory: "Dinning Room",
         colors: ["white"],
