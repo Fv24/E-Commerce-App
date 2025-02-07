@@ -89,6 +89,7 @@ import image48a from './image48a.jpg';
 import image50a from './image50a.jpg';
 import image54a from './image54a.jpg';
 import image54b from './image54b.jpg';
+import bin from './bin.png';
 
 export const assets = {
     logo,
@@ -181,7 +182,8 @@ export const assets = {
     image33c,
     closes,
     star,
-    starnull
+    starnull,
+    bin
 } 
 
 export const products = [
