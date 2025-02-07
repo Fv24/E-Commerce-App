@@ -90,6 +90,8 @@ import image50a from './image50a.jpg';
 import image54a from './image54a.jpg';
 import image54b from './image54b.jpg';
 import bin from './bin.png';
+import stripe from './stripe.png';
+import paypal from './paypal.png';
 
 export const assets = {
     logo,
@@ -183,7 +185,9 @@ export const assets = {
     closes,
     star,
     starnull,
-    bin
+    bin,
+    stripe,
+    paypal
 } 
 
 export const products = [
