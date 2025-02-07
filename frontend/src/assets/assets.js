@@ -94,6 +94,7 @@ import stripe from './stripe.png';
 import paypal from './paypal.png';
 import aboutus from './aboutus.jpg';
 import aboutus2 from './aboutus2.jpg';
+import contact from './contact.jpg';
 
 export const assets = {
     logo,
@@ -191,7 +192,8 @@ export const assets = {
     stripe,
     paypal,
     aboutus,
-    aboutus2
+    aboutus2,
+    contact
 } 
 
 export const products = [
