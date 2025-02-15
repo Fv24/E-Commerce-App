@@ -95,6 +95,10 @@ import paypal from './paypal.png';
 import aboutus from './aboutus.jpg';
 import aboutus2 from './aboutus2.jpg';
 import contact from './contact.jpg';
+import add from './add.png';
+import list from './list.png';
+import orders from './orders.png';
+
 
 export const assets = {
     logo,
@@ -193,7 +197,11 @@ export const assets = {
     paypal,
     aboutus,
     aboutus2,
-    contact
+    contact,
+    add,
+    list,
+    orders,
+
 } 
 
 export const products = [

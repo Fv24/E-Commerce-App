@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {Routes,Route} from 'react-router-dom';
 import Home from './pages/Home';
 import Collection from './pages/Collection';
@@ -14,8 +14,14 @@ import Footer from './components/Footer';
 import SearchBar from './components/SearchBar';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Dashboard from './pages/admin/Dashboard';
+import Add from './pages/admin/Add';
+import List from './pages/admin/List';
+import ListOrders from './pages/admin/ListOrders';
 
 const App = () => {
+
+
   return (
     <div className='px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'>
       <ToastContainer />
@@ -31,6 +37,13 @@ const App = () => {
         <Route path='/login' element={<Login/>}/>
         <Route path='/place-order' element={<PlaceOrder/>}/>
         <Route path='/orders' element={<Orders/>}/>
+
+        <Route path='/dashboard' element={<Dashboard />}>
+          <Route path='add' element={<Add />} />
+          <Route path='list' element={<List />} />
+          <Route path='listorders' element={<ListOrders />} />
+        </Route>
+        
       </Routes>
       <Footer/>
     </div>

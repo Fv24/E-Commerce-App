@@ -19,6 +19,12 @@ a.active hr{
 ::-webkit-scrollbar{
     display:none;
 }
+
+select,input,textarea{
+    border: 1px solid #c2c2c2;
+    outline-color: #c586a5;
+    border-radius: 4px;
+}
   
 @media (max-width:640px){
     a.active{
@@ -26,4 +32,3 @@ a.active hr{
         color: white;
     }
 }
-
