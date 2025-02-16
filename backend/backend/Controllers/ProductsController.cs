@@ -24,6 +24,7 @@ namespace backend.Controllers
             var products = dbContext.Products.ToList();
 
             return Ok(products);
+
         }
 
         [HttpGet("{id}")]

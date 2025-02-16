@@ -1,10 +1,10 @@
-import logo from './logo.png';
+
 import search from './search.png';
 import profile from './profile.png';
 import shoppingcart from './shopping-cart.png';
 import menu from './menu.png';
 import back from './back.png';
-import hero from './hero.jpg';
+
 import image1 from './image1.jpg';
 import image2 from './image2.jpg';
 import image3 from './image3.jpg';
@@ -92,22 +92,21 @@ import image54b from './image54b.jpg';
 import bin from './bin.png';
 import stripe from './stripe.png';
 import paypal from './paypal.png';
-import aboutus from './aboutus.jpg';
-import aboutus2 from './aboutus2.jpg';
-import contact from './contact.jpg';
+
+
 import add from './add.png';
 import list from './list.png';
 import orders from './orders.png';
 
 
 export const assets = {
-    logo,
+ 
     search,
     profile,
     shoppingcart,
     menu,
     back,
-    hero,
+
     image1,
     image2,
     image3,
@@ -195,9 +194,8 @@ export const assets = {
     bin,
     stripe,
     paypal,
-    aboutus,
-    aboutus2,
-    contact,
+  
+
     add,
     list,
     orders,

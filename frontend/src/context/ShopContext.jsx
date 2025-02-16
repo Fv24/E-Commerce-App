@@ -74,6 +74,7 @@ const ShopContextProvider = (props) => {
     products,
     currency,
     delivery_free,
+    setProducts,
     search,
     setSearch,
     showSearch,

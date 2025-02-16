@@ -1,6 +1,5 @@
 import React from 'react'
 import Title from '../components/Title'
-import { assets } from '../assets/assets'
 import NewsLetterBox from '../components/NewsLetterBox'
 
 const About = () => {
@@ -12,14 +11,14 @@ const About = () => {
     </div>
 
       <div className='my-10 flex flex-col md:flex-row gap-16'>
-          <img className='w-full md:max-w-[450px]' src={assets.aboutus} alt="" />
+          <img className='w-full md:max-w-[450px]' src='/Images/aboutus.jpg' alt="" />
             <div className='flex flex-col justify-center gap-6 md:w-2/4 text-gray-600'>
                 <p className='text-lg md:text-xl text-justify'>Welcome to DécorEase, your go-to destination for stylish home decor and furniture. Our mission is to make decorating your space effortless and enjoyable. Whether you're looking for modern, classic, or minimalist designs, we bring you a curated collection that blends quality, elegance, and affordability.</p>
                 <p className='text-lg md:text-xl text-justify'>At DécorEase, we believe that your home should reflect your personality. That is why we offer a seamless shopping experience, from browsing our exclusive collections to secure checkout and reliable delivery. Discover the art of decorating with ease—only at DécorEase!</p>
             </div>
       </div>
       <div className='my-10 flex flex-col md:flex-row gap-16'>
-          <img className='w-full md:max-w-[450px]' src={assets.aboutus2} alt="" />
+          <img className='w-full md:max-w-[450px]' src='/Images/aboutus2.jpg' alt="" />
             <div className='flex flex-col justify-center gap-6 md:w-2/4 text-gray-600'>
                 <b className='text-gray-800 text-lg md:text-xl'>Our Mission</b>
                 <p className='text-lg md:text-xl text-justify' >At DécorEase, our mission is to transform every house into a home by offering high-quality, stylish, and affordable home decor and furniture. We strive to make interior design accessible to everyone, providing a seamless shopping experience that inspires creativity and personal expression. We are committed to excellence, ensuring that every piece in our collection reflects elegance, durability, and modern aesthetics. DécorEase - Decorating Made Simple.</p>
