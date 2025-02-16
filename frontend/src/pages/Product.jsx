@@ -1,96 +1,130 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext';
-import { assets } from '../assets/assets';
 import RelatedProducts from '../components/RelatedProducts';
+import axios from 'axios';
 
 const Product = () => {
-
-  const {productId} =  useParams();
-  const {products,currency,addToCart} = useContext(ShopContext);
-  const [productData, setProductData] = useState(false);
-  const [image,setImage] = useState('');
-  const [color ,setColor] = useState('')
-
-  const fetchProductData = async () => {
-
-    products.map((item) => {
-        if(item.id==productId){
-          setProductData(item)
-          setImage(item.image[0])
-    
-          
-          return null; 
-        }
-    })
-  }
+  const {productId } = useParams();
+  const {currency, addToCart } = useContext(ShopContext);
+  const [productData, setProductData] = useState(null);
+  const [image, setImage] = useState('');
+  const [color, setColor] = useState('');
 
   useEffect(() => {
-    fetchProductData();
-  },[productId,products])
+    const fetchProductData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5189/api/products/${productId}`);
+        let product = response.data;
 
-  return productData ? (
-    <div className='border-t-2 pt-10 transition-opacity ease-in duration-500 opacity-100 '>
-      {/* Product data */}
-      <div className='flex gap-12 sm:gap-12 flex-col sm:flex-row'>
-        {/* Product images */}
-        <div className='flex-1 flex flex-col-reverse gap-3 sm:flex-row'>
-            <div className='flex sm:flex-col overflow-x-auto sm:overflow-y-scroll justify-between sm:justify-normal sm:w-[18.7%] w-full'>
-                {
-                  productData.image.map((item,index) => (
-                    <img onClick={() => setImage(item)} src={item} key={index} className='w-[24%] sm:w-full sm:mb-3 flex-shrink-0 cursor-pointer' alt="" />
-                  ))
-                }
-            </div>
-            <div className='w-full sm:w-[80%]'>
-                <img  className='w-full h-auto' src={image} alt="" />
-            </div>
+        // Ensure 'image' is a string
+        setProductData(product);
+        setImage(product.image);
+
+        // Ensure 'colors' is an array
+        if (typeof product.colors === 'string') {
+          try {
+            setProductData((prev) => ({
+              ...prev,
+              colors: JSON.parse(product.colors),
+            }));
+          } catch {
+            setProductData((prev) => ({
+              ...prev,
+              colors: [],
+            }));
+          }
+        } else if (!Array.isArray(product.colors)) {
+          setProductData((prev) => ({
+            ...prev,
+            colors: [],
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching product:', error);
+      }
+    };
+
+    fetchProductData();
+  }, [productId]);
+
+  if (!productData) {
+    return <div className="text-center py-10">Loading product...</div>;
+  }
+
+  return (
+    <div className="border-t-2 pt-10 transition-opacity ease-in duration-500 opacity-100">
+      {/* Product Information */}
+      <div className="flex gap-12 sm:gap-12 flex-col sm:flex-row">
+        {/* Product Images */}
+        <div className="flex-1 flex flex-col-reverse gap-3 sm:flex-row">
+          <div className="w-full sm:w-[60%]">
+            <img className="w-full h-auto" src={`/Images/${image}`} alt={productData.name} />
+          </div>
         </div>
-        {/* --------Product Info--------------- */}
-        <div className='flex-1'> 
-            <h1 className='font-medium text-2xl mt-2'>{productData.name}</h1>
-            <div className='flex items-center gap-1 mt-2'>
-                 <img className="w-3 5" src={assets.star} alt="" />
-                 <img className="w-3 5" src={assets.star} alt="" />
-                 <img className="w-3 5" src={assets.star} alt="" />
-                 <img className="w-3 5" src={assets.star} alt="" />
-                 <img className="w-3 5" src={assets.starnull} alt="" />
-                 <p className='pl-2'>(22)</p>
-            </div>
-            <p className='mt-5 text-3xl font-medium'>{currency}{productData.price}</p>
-            <p className='mt-5 text-gray-500 md:w-4/5'>{productData.description}</p>
-            <div className='flex flex-col gap-4 my-8'>
+
+        {/* Main Product Info */}
+        <div className="flex-1">
+          <h1 className="font-medium text-2xl mt-2">{productData.name}</h1>
+          <div className="flex items-center gap-1 mt-2">
+            <img className="w-3 5" src="/Images/star.png" alt="" />
+            <img className="w-3 5" src="/Images/star.png" alt="" />
+            <img className="w-3 5" src="/Images/star.png" alt="" />
+            <img className="w-3 5" src="/Images/star.png" alt="" />
+            <img className="w-3 5" src="/Images/starnull.png" alt="" />
+            <p className="pl-2">(22)</p>
+          </div>
+          <p className="mt-5 text-3xl font-medium">{currency}{productData.price}</p>
+          <p className="mt-5 text-gray-500 md:w-4/5">{productData.description}</p>
+
+          {/* Color Selection */}
+          {Array.isArray(productData.colors) && productData.colors.length > 0 && (
+            <div className="flex flex-col gap-4 my-8">
               <p>Select Color</p>
-              <div className='flex gap-2'>
-                  {productData.colors.map((item,index) => (
-                    <button onClick={() => setColor(item)} className={`border py-2 px-4 bg-gray-100 ${item === color ? `border-orange-500` : ''}`} key={index}>{item}</button>
-                  ))}
+              <div className="flex gap-2">
+                {productData.colors.map((item, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setColor(item)}
+                    className={`border py-2 px-4 bg-gray-100 ${item === color ? 'border-orange-500' : ''}`}>
+                    {item}
+                  </button>
+                ))}
               </div>
             </div>
-            <button onClick={() => addToCart(productData.id, color)} className='bg-black text text-white px-8 py-3 text-sm active:bg-gray-700'>ADD TO CART</button>
-            <hr className='mt-8 sm:w-4/5'/>
-            <div className='text-sm text-gray-500 mt-5 flex flex-col gap-1'>
-                  <p>100% Original product.</p>
-                  <p>Cash on delivery is avaliable on this product.</p>
-                  <p>Easy return and exchange policy within 7 days. </p>
-            </div>
-        </div>
-      </div>
-      {/* Description & Review Section */}
-      <div className='mt-20'>
-        <div className='flex'>
-          <b className='border px-5 py-3 text-sm'>Description</b>
-          <p className='border px-5 py-3 text-sm'>Reviews (122)</p>
-        </div>
-      </div>
-      <div className='flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500'>
-          <p>DécorEase is an innovative e-commerce platform designed to simplify the way users shop for home decorations and furniture. With a sleek and user-friendly interface, DécorEase offers a seamless browsing experience, allowing customers to explore a curated selection of stylish and high-quality home décor items. </p>
-          <p>The platform features detailed product descriptions, high-resolution images, and an intuitive filtering system to help users find the perfect pieces for their space.</p>
-      </div>
-      {/* Display related products */}
-      <RelatedProducts category={productData.category} subCategory={productData.subCategory}/>
-    </div>
-  ) : <div className='opacity-0'></div>
-}
+          )}
 
-export default Product
+          <button
+            onClick={() => addToCart(productData.id, color)}
+            className="bg-black text-white px-8 py-3 text-sm active:bg-gray-700">
+            ADD TO CART
+          </button>
+
+          <hr className="mt-8 sm:w-4/5" />
+          <div className="text-sm text-gray-500 mt-5 flex flex-col gap-1">
+            <p>100% Original product.</p>
+            <p>Cash on delivery is available for this product.</p>
+            <p>Easy return and exchange policy within 7 days.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Description and Reviews */}
+      <div className="mt-20">
+        <div className="flex">
+          <b className="border px-5 py-3 text-sm">Description</b>
+          <p className="border px-5 py-3 text-sm">Reviews (122)</p>
+        </div>
+      </div>
+      <div className="flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500">
+        <p>DécorEase is an innovative e-commerce platform designed to simplify the way users shop for home decorations and furniture.</p>
+        <p>The platform features detailed product descriptions, high-resolution images, and an intuitive filtering system to help users find the perfect pieces for their space.</p>
+      </div>
+
+      {/* Related Products */}
+      <RelatedProducts category={productData.category} subCategory={productData.subCategory} />
+    </div>
+  );
+};
+
+export default Product;

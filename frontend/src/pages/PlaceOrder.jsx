@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react'
 import Title from '../components/Title'
 import CartTotal from '../components/CartTotal'
-import { assets } from '../assets/assets'
 import { ShopContext } from '../context/ShopContext'
 
 const PlaceOrder = () => {
@@ -47,11 +46,11 @@ const PlaceOrder = () => {
             <div className='flex gap-3 flex-col lg:flex-row'> 
                 <div onClick={() => setMethod('stripe')} className='flex items-center gap-3 border p-2 px-3 cursor-pointer'>
                 <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'stripe' ? 'bg-green-600' : ''}`}></p>
-                  <img className='h-10 mx-4' src={assets.stripe} alt="" />
+                  <img className='h-10 mx-4' src='/Images/stripe.png' alt="" />
                 </div>
                 <div onClick={() => setMethod('paypal')} className='flex items-center gap-3 border p-2 px-3 cursor-pointer'>
                 <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'paypal' ? 'bg-green-600' : ''}`}></p>
-                  <img className='h-10 mx-4' src={assets.paypal} alt="" />
+                  <img className='h-10 mx-4' src='/Images/paypal.png' alt="" />
                 </div>
                 <div onClick={() => setMethod('cod')} className='flex items-center gap-3 border p-2 px-3 cursor-pointer'>
                 <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'cod' ? 'bg-green-600' : ''}`}></p>

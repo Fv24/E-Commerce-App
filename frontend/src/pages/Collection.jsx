@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { ShopContext } from '../context/ShopContext';
-import { assets } from '../assets/assets';
 import Title from '../components/Title';
 import ProductItem from '../components/ProductItem';
 
@@ -84,7 +83,7 @@ useEffect(() => {
         {/* Filter options */}
       <div className='min-w-60'>
           <p onClick={()=>setShowFilter(!showFilter)}  className='my-2 text-xl flex items-center cursor-pointer gap-2'>FILTERS
-            <img  className={`h-3 sm:hidden ${showFilter ? 'rotate-90' : ''}`} src={assets.rightArrow} alt="" />
+            <img  className={`h-3 sm:hidden ${showFilter ? 'rotate-90' : ''}`} src='/Images/right-arrow.png' alt="" />
           </p>
 
           {/* Category filter */}

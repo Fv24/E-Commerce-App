@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import {useNavigate } from 'react-router-dom';  
 
 const AddProduct = () => {
 
@@ -12,6 +13,8 @@ const AddProduct = () => {
   const [subCategory, setSubCategory] = useState("");
   const [colors, setColors] = useState("");
   const [bestSeller, setBestSeller] = useState(false);
+
+  const navigate = useNavigate(); 
   
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -43,11 +46,17 @@ const AddProduct = () => {
         setSubCategory("");
         setColors("");
         setBestSeller(false);
+
       }
     } catch (error) {
       console.log(error);
       toast.error("Failed to add product.");
     }
+  };
+
+  const onCancelHandler = () => {
+    navigate('/dashboard'); // Now it will navigate correctly
+  
   };
 
   return (
@@ -144,9 +153,16 @@ const AddProduct = () => {
         </label>
       </div>
 
+      <div className="flex gap-4 mt-4">
       <button type="submit" className="w-28 py-3 mt-4 bg-green-700 text-white">
         ADD
       </button>
+      <button type="button" onClick={onCancelHandler} className="w-28 py-3 mt-4 bg-red-500 text-white">
+          CANCEL
+        </button>
+      </div>
+
+     
     </form>
   );
 };

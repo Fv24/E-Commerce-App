@@ -59,6 +59,10 @@ const UpdateProduct = () => {
     }
   };
 
+  const onCancelHandler = () => {
+    navigate('/dashboard/listProducts'); // Redirect to the product list
+  };
+
   return (
     <form onSubmit={onSubmitHandler} className="flex flex-col w-full items-start gap-3 ml-20">
       <div className="w-full">
@@ -153,9 +157,16 @@ const UpdateProduct = () => {
         </label>
       </div>
 
-      <button type="submit" className="w-28 py-3 mt-4 bg-blue-400 text-white">
-        UPDATE
-      </button>
+      <div className="flex gap-4 mt-4">
+        <button type="submit" className="w-28 py-3 bg-blue-500 text-white">
+          UPDATE
+        </button>
+        <button type="button" onClick={onCancelHandler} className="w-28 py-3 bg-red-500 text-white">
+          CANCEL
+        </button>
+      </div>
+
+   
     </form>
   );
 };

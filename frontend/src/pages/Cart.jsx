@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { ShopContext } from '../context/ShopContext'
 import Title from '../components/Title';
-import { assets } from '../assets/assets';
 import CartTotal from '../components/CartTotal';
 
 const Cart = () => {
@@ -53,7 +52,7 @@ const Cart = () => {
                         </div>
                     </div>
                         <input onChange={(e) => e.target.value === '' || e.target.value === '0' ? null : updateQuantity(item.id,item.color, Number(e.target.value))} className='border max-w-10 sm:max-w-20 px-1 sm:px-2 py-1' type="number" min={1} defaultValue={item.quantity} />
-                        <img onClick={() => updateQuantity(item.id, item.color, 0)} className='w-4 mr-4 sm:w-5 cursor-pointer' src={assets.bin} alt="" />
+                        <img onClick={() => updateQuantity(item.id, item.color, 0)} className='w-4 mr-4 sm:w-5 cursor-pointer' src='/Images/bin.png' alt="" />
                   </div>
                 )
             })
