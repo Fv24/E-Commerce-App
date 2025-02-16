@@ -31,6 +31,7 @@ const ShopContextProvider = (props) => {
     }
 
     let cartData = structuredClone(cartItems);
+    
 
     if (cartData[itemId]) {
       cartData[itemId][color] = (cartData[itemId][color] || 0) + 1;
