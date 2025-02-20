@@ -21,6 +21,11 @@ const Dashboard = () => {
             <img className="w-5 h-5" src='/Images/orders.png' alt="" />
             <p className='hidden md:block'>Orders</p>
           </NavLink>
+
+          <NavLink className="flex items-center gap-3 border border-gray-300 border-r-0 px-3 py-2 rounded-l w-full" to="userDetails">
+            <img className="w-5 h-5" src='/Images/userDetail.png' alt="" />
+            <p className='hidden md:block'>Users</p>
+          </NavLink>
         </div>
       </div>
 

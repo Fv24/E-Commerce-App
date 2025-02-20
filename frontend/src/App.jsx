@@ -19,6 +19,8 @@ import AddProduct from './pages/admin/products/AddProduct';
 import ListOrders from './pages/admin/ListOrders';
 import UpdateProduct from './pages/admin/products/UpdateProduct';
 import ListProducts from './pages/admin/products/ListProducts';
+import PrivateRoute from './components/PrivateRoute';
+import UserDetails from './pages/admin/products/UserDetails';
 
 
 const App = () => {
@@ -40,13 +42,15 @@ const App = () => {
         <Route path='/place-order' element={<PlaceOrder/>}/>
         <Route path='/orders' element={<Orders/>}/>
 
-        <Route path='/dashboard' element={<Dashboard/>}>
-          <Route path='addProduct' element={<AddProduct/>} />
-          <Route path='listProducts' element={<ListProducts/>} />
-          <Route path='listorders' element={<ListOrders/>} />
-          <Route path="updateProduct/:id" element={<UpdateProduct/>}/>
-        </Route>
-        
+        <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>}>
+            <Route path="addProduct" element={<AddProduct />} />
+            <Route path="listProducts" element={<ListProducts />} />
+            <Route path="listorders" element={<ListOrders />} />
+            <Route path="updateProduct/:id" element={<UpdateProduct />} />
+            <Route path="userDetails" element={<UserDetails/>} />
+            
+      </Route>
+            
       </Routes>
       <Footer/>
     </div>
