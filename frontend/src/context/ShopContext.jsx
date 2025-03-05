@@ -3,19 +3,35 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-
 export const ShopContext = createContext();
 
 const ShopContextProvider = (props) => {
   const [products, setProducts] = useState([]); // Define products state
-  const [search, setSearch] = useState('');
-  const [showSearch, setShowSearch] = useState(false);
-  const [cartItems, setCartItems] = useState({});
   const currency = '€';
   const delivery_free = 10;
+  const [search, setSearch] = useState('');
+  const [showSearch, setShowSearch] = useState(false);
   const navigate = useNavigate();
+
+  const [cartItems, setCartItems] = useState({});
+ 
+
   const [token,setToken] = useState('')
   const [userRole, setUserRole] = useState(''); 
+
+//Get products from database
+
+  useEffect(() => {
+    axios.get('http://localhost:5189/api/products')
+      .then(response => {
+        setProducts(response.data); // Fetch and set products
+      })
+      .catch(error => {
+        console.error('Error fetching products:', error);
+      });
+  }, []);
+
+
 
 
   useEffect(() => {
@@ -38,15 +54,7 @@ const ShopContextProvider = (props) => {
   }, [token, userRole]);
 
 
-  useEffect(() => {
-    axios.get('http://localhost:5189/api/products')
-      .then(response => {
-        setProducts(response.data); // Fetch and set products
-      })
-      .catch(error => {
-        console.error('Error fetching products:', error);
-      });
-  }, []);
+ 
 
   const addToCart = async (itemId, color) => {
     if (!color) {
@@ -204,13 +212,14 @@ const ShopContextProvider = (props) => {
   
   const value = {
     products,
+    setProducts,
     currency,
     delivery_free,
-    setProducts,
     search,
     setSearch,
     showSearch,
     setShowSearch,
+
     cartItems,
     addToCart,
     getCartCount,

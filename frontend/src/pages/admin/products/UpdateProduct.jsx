@@ -51,7 +51,7 @@ const UpdateProduct = () => {
       if (response.status === 200) {
         toast.success('Product updated successfully!');
         // Update the state with the new product data
-        setProducts(products.map(product => product.id === parseInt(id) ? updatedProduct : product));
+        setProducts(products.map(product => product.id === parseInt(id) ?  { ...product, ...updatedProduct } : product));
         navigate('/dashboard/listProducts'); // Redirect to the product list page
       }
     } catch (error) {
@@ -64,7 +64,7 @@ const UpdateProduct = () => {
   };
 
   return (
-    <form onSubmit={onSubmitHandler} className="flex flex-col w-full items-start gap-3 ml-20">
+    <form onSubmit={onSubmitHandler} className="flex flex-col w-full items-start gap-3 px-4 sm:px-10 md:px-20 lg:px-32">
       <div className="w-full">
         <p className="mb-2">Product Image</p>
         <input
@@ -99,44 +99,53 @@ const UpdateProduct = () => {
         />
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-2 w-full sm:gap-8">
-        <div>
-          <p className="mb-2">Product Category:</p>
-          <select onChange={(e) => setCategory(e.target.value)} value={category} className="w-full px-3 py-2">
-            <option value="">Select Category</option>
-            <option value="Furniture">FURNITURE</option>
-            <option value="Accessories">ACCESSORIES</option>
-            <option value="Lighting">LIGHTING</option>
-            <option value="Decorative Art">DECORATIVE ART</option>
-          </select>
-        </div>
+      <div className="flex flex-col sm:flex-row gap-8 w-full">
+  <div className="w-full sm:w-1/5">
+    <p className="mb-2">Product Category:</p>
+    <select
+      onChange={(e) => setCategory(e.target.value)}
+      value={category}
+      className="w-full max-w-[300px] px-3 py-2"
+    >
+      <option value="">Select Category</option>
+      <option value="Furniture">FURNITURE</option>
+      <option value="Accessories">ACCESSORIES</option>
+      <option value="Lighting">LIGHTING</option>
+      <option value="Decorative Art">DECORATIVE ART</option>
+    </select>
+  </div>
 
-        <div>
-          <p className="mb-2">Sub Category:</p>
-          <select onChange={(e) => setSubCategory(e.target.value)} value={subCategory} className="w-full px-3 py-2">
-            <option value="">Select SubCategory</option>
-            <option value="Living Room">Living Room</option>
-            <option value="Bedroom">Bedroom</option>
-            <option value="Kitchen">Kitchen</option>
-            <option value="Dinning Room">Dinning Room</option>
-            <option value="Home Decor">Home Decor</option>
-            <option value="Art">Art</option>
-            <option value="Mirrors">Mirrors</option>
-          </select>
-        </div>
+  <div className="w-full sm:w-1/5">
+    <p className="mb-2">Sub Category:</p>
+    <select
+      onChange={(e) => setSubCategory(e.target.value)}
+      value={subCategory}
+      className="w-full max-w-[300px] px-3 py-2"
+    >
+      <option value="">Select SubCategory</option>
+      <option value="Living Room">Living Room</option>
+      <option value="Bedroom">Bedroom</option>
+      <option value="Kitchen">Kitchen</option>
+      <option value="Dinning Room">Dinning Room</option>
+      <option value="Home Decor">Home Decor</option>
+      <option value="Art">Art</option>
+      <option value="Mirrors">Mirrors</option>
+    </select>
+  </div>
 
-        <div>
-          <p className="mb-2">Product Price:</p>
-          <input
-            onChange={(e) => setPrice(e.target.value)}
-            value={price}
-            className="w-full px-3 py-2 sm:w-[120px]"
-            type="number"
-            placeholder="25"
-            required
-          />
-        </div>
-      </div>
+  <div className="w-full sm:w-1/5">
+    <p className="mb-2">Product Price:</p>
+    <input
+      onChange={(e) => setPrice(e.target.value)}
+      value={price}
+      className="w-full max-w-[300px] px-3 py-2 sm:w-[120px]"
+      type="number"
+      placeholder="25"
+      required
+    />
+  </div>
+</div>
+
 
       <div className="w-full">
         <p className="mb-2">Product Colors:</p>
@@ -157,7 +166,7 @@ const UpdateProduct = () => {
         </label>
       </div>
 
-      <div className="flex gap-4 mt-4">
+      <div className="flex gap-4 mt-4 flex-wrap justify-center sm:justify-start">
         <button type="submit" className="w-28 py-3 bg-blue-500 text-white">
           UPDATE
         </button>
@@ -165,8 +174,6 @@ const UpdateProduct = () => {
           CANCEL
         </button>
       </div>
-
-   
     </form>
   );
 };

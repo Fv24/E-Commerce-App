@@ -5,8 +5,8 @@ import RelatedProducts from '../components/RelatedProducts';
 import axios from 'axios';
 
 const Product = () => {
-  const {productId } = useParams();
-  const {currency, addToCart } = useContext(ShopContext);
+  const { productId } = useParams();
+  const { currency, addToCart } = useContext(ShopContext);
   const [productData, setProductData] = useState(null);
   const [image, setImage] = useState('');
   const [color, setColor] = useState('');
@@ -15,31 +15,8 @@ const Product = () => {
     const fetchProductData = async () => {
       try {
         const response = await axios.get(`http://localhost:5189/api/products/${productId}`);
-        let product = response.data;
-
-        // Ensure 'image' is a string
-        setProductData(product);
-        setImage(product.image);
-
-        // Ensure 'colors' is an array
-        if (typeof product.colors === 'string') {
-          try {
-            setProductData((prev) => ({
-              ...prev,
-              colors: JSON.parse(product.colors),
-            }));
-          } catch {
-            setProductData((prev) => ({
-              ...prev,
-              colors: [],
-            }));
-          }
-        } else if (!Array.isArray(product.colors)) {
-          setProductData((prev) => ({
-            ...prev,
-            colors: [],
-          }));
-        }
+        setProductData(response.data);
+        setImage(response.data.image);
       } catch (error) {
         console.error('Error fetching product:', error);
       }
@@ -47,6 +24,7 @@ const Product = () => {
 
     fetchProductData();
   }, [productId]);
+
 
   if (!productData) {
     return <div className="text-center py-10">Loading product...</div>;
@@ -57,7 +35,7 @@ const Product = () => {
       {/* Product Information */}
       <div className="flex gap-12 sm:gap-12 flex-col sm:flex-row">
         {/* Product Images */}
-        <div className="flex-1 flex flex-col-reverse gap-3 sm:flex-row">
+        <div className="flex-1 flex flex-col-reverse gap-3 sm:flex-row justify-end">
           <div className="w-full sm:w-[60%]">
             <img className="w-full h-auto" src={`/Images/${image}`} alt={productData.name} />
           </div>
@@ -78,22 +56,22 @@ const Product = () => {
           <p className="mt-5 text-gray-500 md:w-4/5">{productData.description}</p>
 
           {/* Color Selection */}
-          {Array.isArray(productData.colors) && productData.colors.length > 0 && (
+          {productData.colors && productData.colors.trim() !== '' && (
             <div className="flex flex-col gap-4 my-8">
               <p>Select Color</p>
               <div className="flex gap-2">
-                {productData.colors.map((item, index) => (
+                {productData.colors.split(',').map((item, index) => (
                   <button
                     key={index}
-                    onClick={() => setColor(item)}
-                    className={`border py-2 px-4 bg-gray-100 ${item === color ? 'border-orange-500' : ''}`}>
-                    {item}
+                    onClick={() => setColor(item.trim())}
+                    className={`border py-2 px-4 bg-gray-100 ${item.trim() === color ? 'border-orange-500' : ''}`}>
+                    {item.trim()}
                   </button>
                 ))}
               </div>
             </div>
           )}
-
+          
           <button
             onClick={() => addToCart(productData.id, color)}
             className="bg-black text-white px-8 py-3 text-sm active:bg-gray-700">

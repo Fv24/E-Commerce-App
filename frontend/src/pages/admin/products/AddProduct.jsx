@@ -1,21 +1,23 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import {useNavigate } from 'react-router-dom';  
+import { useNavigate } from 'react-router-dom';
+import { ShopContext } from "../../../context/ShopContext";
 
 const AddProduct = () => {
 
+  const { setProducts } = useContext(ShopContext);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [image, setImage] = useState(""); 
+  const [image, setImage] = useState("");
   const [category, setCategory] = useState("");
   const [subCategory, setSubCategory] = useState("");
   const [colors, setColors] = useState("");
   const [bestSeller, setBestSeller] = useState(false);
 
-  const navigate = useNavigate(); 
-  
+  const navigate = useNavigate();
+
   const onSubmitHandler = async (e) => {
     e.preventDefault();
 
@@ -34,10 +36,12 @@ const AddProduct = () => {
       const response = await axios.post("http://localhost:5189/api/products", productData, {
         headers: { "Content-Type": "application/json" },
       });
-      
 
       if (response.data) {
         toast.success("Product added successfully!");
+
+        setProducts(prevProducts => [...prevProducts, response.data]);
+
         setName("");
         setDescription("");
         setPrice("");
@@ -46,7 +50,6 @@ const AddProduct = () => {
         setSubCategory("");
         setColors("");
         setBestSeller(false);
-
       }
     } catch (error) {
       console.log(error);
@@ -55,12 +58,12 @@ const AddProduct = () => {
   };
 
   const onCancelHandler = () => {
-    navigate('/dashboard'); // Now it will navigate correctly
-  
+    navigate('/dashboard');
   };
 
   return (
-    <form onSubmit={onSubmitHandler} className="flex flex-col w-full items-start gap-3 ml-20">
+    <form onSubmit={onSubmitHandler} className="flex flex-col w-full items-start gap-3 sm:ml-20 px-4">
+
       <div className="w-full">
         <p className="mb-2">Product Image</p>
         <input
@@ -154,15 +157,13 @@ const AddProduct = () => {
       </div>
 
       <div className="flex gap-4 mt-4">
-      <button type="submit" className="w-28 py-3 mt-4 bg-green-700 text-white">
-        ADD
-      </button>
-      <button type="button" onClick={onCancelHandler} className="w-28 py-3 mt-4 bg-red-500 text-white">
+        <button type="submit" className="w-28 py-3 mt-4 bg-green-700 text-white">
+          ADD
+        </button>
+        <button type="button" onClick={onCancelHandler} className="w-28 py-3 mt-4 bg-red-500 text-white">
           CANCEL
         </button>
       </div>
-
-     
     </form>
   );
 };

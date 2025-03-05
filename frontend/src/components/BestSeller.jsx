@@ -4,6 +4,7 @@ import Title from './Title';
 import ProductItem from './ProductItem';
 
 const BestSeller = () => {
+    
     const {products} = useContext(ShopContext); 
     const [bestseller, setBestSeller] = useState([]);
 

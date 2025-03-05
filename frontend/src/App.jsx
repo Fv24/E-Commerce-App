@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import {Routes,Route} from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Collection from './pages/Collection';
 import About from './pages/About';
@@ -20,7 +20,7 @@ import ListOrders from './pages/admin/ListOrders';
 import UpdateProduct from './pages/admin/products/UpdateProduct';
 import ListProducts from './pages/admin/products/ListProducts';
 import PrivateRoute from './components/PrivateRoute';
-import UserDetails from './pages/admin/products/UserDetails';
+import UserDetails from './pages/admin/users/UserDetails';
 
 
 const App = () => {
@@ -29,30 +29,29 @@ const App = () => {
   return (
     <div className='px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'>
       <ToastContainer />
-     <Navbar/>
-     <SearchBar/>
+      <Navbar />
+      <SearchBar />
       <Routes>
-        <Route path='/' element={<Home/>}/>
-        <Route path='/collection' element={<Collection/>}/>
-        <Route path='/about' element={<About/>}/>
-        <Route path='/contact' element={<Contact/>}/>
-        <Route path='/product/:productId' element={<Product/>}/>
-        <Route path='/cart' element={<Cart/>}/>
-        <Route path='/login' element={<Login/>}/>
-        <Route path='/place-order' element={<PlaceOrder/>}/>
-        <Route path='/orders' element={<Orders/>}/>
+        <Route path='/' element={<Home />} />
+        <Route path='/collection' element={<Collection />} />
+        <Route path='/about' element={<About />} />
+        <Route path='/contact' element={<Contact />} />
+        <Route path='/product/:productId' element={<Product />} />
+        <Route path='/cart' element={<Cart />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/place-order' element={<PlaceOrder />} />
+        <Route path='/orders' element={<Orders />} />
 
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>}>
-            <Route path="addProduct" element={<AddProduct />} />
-            <Route path="listProducts" element={<ListProducts />} />
-            <Route path="listorders" element={<ListOrders />} />
-            <Route path="updateProduct/:id" element={<UpdateProduct />} />
-            <Route path="userDetails" element={<UserDetails/>} />
-            
-      </Route>
-            
+          <Route path="addProduct" element={<AddProduct />} />
+          <Route path="listProducts" element={<ListProducts />} />
+          <Route path="listorders" element={<ListOrders />} />
+          <Route path="updateProduct/:id" element={<UpdateProduct />} />
+          <Route path="userDetails" element={<UserDetails />} />
+        </Route>
+
       </Routes>
-      <Footer/>
+      <Footer />
     </div>
   )
 }

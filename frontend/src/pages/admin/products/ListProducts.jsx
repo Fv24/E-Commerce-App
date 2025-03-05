@@ -24,7 +24,6 @@ const ListProducts = () => {
   };
 
   const goToUpdatePage = (id) => {
-    // Navigate to the update page with the product id
     navigate(`/dashboard/updateProduct/${id}`);
   };
 
@@ -42,13 +41,15 @@ const ListProducts = () => {
         </div>
 
         {products.map((item, index) => (
-          <div key={index} className="grid grid-cols-[1fr_3fr_1fr_1fr_1fr] items-center border p-2 ml-10">
+          <div key={index} className="grid grid-cols-1 sm:grid-cols-[1fr_3fr_1fr_1fr_1fr] items-center border p-2 ml-10">
             <img src={`/Images/${item.image}`} alt={item.name} className="w-auto h-16 object-cover" />
             <p>{item.name}</p>
             <p>{item.category}</p>
             <p>{currency}{item.price}</p>
-            <div className="flex gap-2">
-              <button onClick={() => goToUpdatePage(item.id)} className="bg-blue-500 text-white px-2 py-1 rounded text-sm">Update</button>
+            <div className="flex flex-col sm:flex-row gap-2 sm:justify-center">
+              <button onClick={() => goToUpdatePage(item.id)} className="bg-blue-500 text-white px-2 py-1 rounded text-sm mb-2 sm:mb-0 sm:mr-2">
+                Update
+              </button>
               <button className="bg-red-500 text-white px-2 py-1 rounded text-sm" onClick={() => deleteProduct(item.id)}>
                 Delete
               </button>
