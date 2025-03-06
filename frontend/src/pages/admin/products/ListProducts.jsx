@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const ListProducts = () => {
 
-  const { products, currency, setProducts } = useContext(ShopContext);
+  const {products, currency, setProducts } = useContext(ShopContext);
   const navigate = useNavigate();
 
   const deleteProduct = async (id) => {

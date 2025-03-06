@@ -3,8 +3,7 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom'
 
 const Dashboard = () => {
   const location = useLocation();
-
-  // Check if the current route is the Dashboard
+  
   const isDashboardRoute = location.pathname === '/dashboard';
 
   return (
@@ -36,17 +35,13 @@ const Dashboard = () => {
 
       {/* Right side content area */}
       <div className="dashboard flex-1 relative">
-        {/* Conditionally show the background image based on the current route */}
         {isDashboardRoute && (
           <img
-            src="/Images/dashImg.jpg" // Update with the correct path
+            src="/Images/dashImg.jpg" 
             alt="Dashboard Image"
-            className="absolute w-full h-full object-contain opacity-70 z-0" // Reduced opacity for less transparency
-          />
-
+            className="absolute w-full h-full object-cover opacity-70 z-0" 
+            />
         )}
-
-        {/* Overlay to improve text visibility */}
         <div className="relative z-10">
           <Outlet />
         </div>
