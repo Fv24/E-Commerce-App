@@ -5,8 +5,8 @@ import RelatedProducts from '../components/RelatedProducts';
 import axios from 'axios';
 
 const Product = () => {
-  const { productId } = useParams();
-  const { currency, addToCart } = useContext(ShopContext);
+  const {productId} = useParams();
+  const {currency, addToCart} = useContext(ShopContext);
   const [productData, setProductData] = useState(null);
   const [image, setImage] = useState('');
   const [color, setColor] = useState('');

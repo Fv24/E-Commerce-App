@@ -12,7 +12,6 @@ const ShopContextProvider = (props) => {
   const [search, setSearch] = useState('');
   const [showSearch, setShowSearch] = useState(false);
   const navigate = useNavigate();
-
   const [cartItems, setCartItems] = useState({});
  
 
@@ -31,6 +30,38 @@ const ShopContextProvider = (props) => {
       });
   }, []);
 
+  //Add to cart
+  const addToCart = async (itemId, color) => {
+    if (!color) {
+      toast.error("Select Product Color");
+      return;
+    }
+  
+    let cartData = structuredClone(cartItems);
+  
+    if (cartData[itemId]) {
+      cartData[itemId][color] = (cartData[itemId][color] || 0) + 1; 
+    } else {
+      cartData[itemId] = { [color]: 1 };
+    }
+  
+    setCartItems(cartData);
+  
+    const productData = products.find((product) => product.id === itemId);
+    if (productData) {
+      const requestData = {
+        productName: productData.name,
+        color: color,
+        quantity: cartData[itemId][color],
+        price: productData.price,
+      };
+  
+      await axios.post("http://localhost:5189/api/Cart", requestData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      toast.success("Product added to cart!");
+    }
+  };
 
 
 
@@ -56,38 +87,7 @@ const ShopContextProvider = (props) => {
 
  
 
-  const addToCart = async (itemId, color) => {
-    if (!color) {
-      toast.error("Select Product Color");
-      return;
-    }
-  
-    let cartData = structuredClone(cartItems);
-  
-    if (cartData[itemId]) {
-      cartData[itemId][color] = (cartData[itemId][color] || 0) + 1; // Update specific color's quantity
-    } else {
-      cartData[itemId] = { [color]: 1 };
-    }
-  
-    setCartItems(cartData); // Update local state
-  
-    // Ensure you're sending the correct data
-    const productData = products.find((product) => product.id === itemId);
-    if (productData) {
-      const requestData = {
-        productName: productData.name,
-        color: color,
-        quantity: cartData[itemId][color],
-        price: productData.price,
-      };
-  
-      await axios.post("http://localhost:5189/api/Cart", requestData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      toast.success("Product added to cart!");
-    }
-  };
+
   
   
   
@@ -219,18 +219,20 @@ const ShopContextProvider = (props) => {
     setSearch,
     showSearch,
     setShowSearch,
-
     cartItems,
     addToCart,
+    setCartItems,
+    navigate,
+
     getCartCount,
     updateQuantity,
     getCartAmount,
-    navigate,
+  
     setToken,
     token,
     userRole,
     setUserRole,
-    setCartItems
+
   };
 
   return (
