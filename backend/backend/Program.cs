@@ -15,20 +15,30 @@ var JWTSetting = builder.Configuration.GetSection("JWTSetting");
 // Add services to the container.
 builder.Services.AddControllers();
 
-
-
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Database connection
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+//Frontend connection
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReact",
+        policy => policy.WithOrigins("http://localhost:5173")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+});
 
-builder.Services.AddIdentity<User, IdentityRole>()
+//Identity User and Role
+builder.Services.AddIdentity<User,IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+//JWT 
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -79,16 +89,6 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowReact",
-        policy => policy.WithOrigins("http://localhost:5173") 
-                        .AllowAnyMethod() 
-                        .AllowAnyHeader()
-                         .AllowCredentials());
-});
-
 
 var app = builder.Build();
 

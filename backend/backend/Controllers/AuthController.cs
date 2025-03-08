@@ -12,9 +12,10 @@ using System.Text;
 
 namespace backend.Controllers
 {
+    //api/auth
     [Route("api/[controller]")]
     [ApiController]
-    //api/auth
+  
     public class AuthController : ControllerBase
     {
 
@@ -73,7 +74,7 @@ namespace backend.Controllers
 
         }
 
-        //api/auth/register
+        //api/auth/login
         [AllowAnonymous]
         [HttpPost("login")]
 
@@ -81,7 +82,6 @@ namespace backend.Controllers
         {
             if (!ModelState.IsValid)
             {
-
                 return BadRequest(ModelState);
             }
 
@@ -156,6 +156,7 @@ namespace backend.Controllers
 
         }
 
+        //api/auth/detail
         [Authorize]
         [HttpGet("detail")]
 
@@ -172,17 +173,18 @@ namespace backend.Controllers
                     Message = "User not found"
                 });
             }
-                return Ok(new UserDTO
-                {
-                    Id = user.Id,
-                    Email = user.Email,
-                    Name = user.Name,
-                    Roles = [..await userManager.GetRolesAsync(user)],
-                    AccessFailedCount = user.AccessFailedCount,
+            return Ok(new UserDTO
+            {
+                Id = user.Id,
+                Email = user.Email,
+                Name = user.Name,
+                Roles = [..await userManager.GetRolesAsync(user)],
+                AccessFailedCount = user.AccessFailedCount,
 
-                });
-            
+            });
         }
+
+        //api/auth
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers()
         {
@@ -192,7 +194,7 @@ namespace backend.Controllers
 
             foreach (var user in usersList)
             {
-                var roles = await userManager.GetRolesAsync(user); // ✅ Await outside LINQ
+                var roles = await userManager.GetRolesAsync(user); 
 
                 users.Add(new UserDTO
                 {

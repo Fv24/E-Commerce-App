@@ -22,6 +22,7 @@ namespace backend.Controllers
             this.userManager = userManager;
         }
 
+        //api/Roles
         [HttpPost]
 
         public async Task<ActionResult> CreateRole([FromBody] CreateRoleDTO createRoleDTO)
@@ -47,6 +48,8 @@ namespace backend.Controllers
             return BadRequest("Role creation failed.");
         }
 
+
+        //api/Roles
         [HttpGet]
         public async Task<ActionResult<IEnumerable<RoleResponseDTO>>> GetRoles()
         {
@@ -69,6 +72,7 @@ namespace backend.Controllers
             return Ok(roles);
         }
 
+        //api/Roles/{id}
         [HttpDelete("{id}")]
 
         public async Task<IActionResult> DeleteRole(string id)
@@ -90,6 +94,8 @@ namespace backend.Controllers
             return BadRequest("Role deletion failed");
         }
 
+
+        //api/Roles/asign
         [HttpPost("asign")]
 
         public async Task<IActionResult> AssignRole([FromBody] RoleAssignDTO roleAssignDTO)
@@ -117,12 +123,7 @@ namespace backend.Controllers
             return BadRequest(error.Description);
         }
 
-
-        public class RoleUpdateRequest
-        {
-            public string Role { get; set; }
-        }
-
+        //api/Roles/update-role/{userId}
         [HttpPut("update-role/{userId}")]
         public async Task<ActionResult> UpdateUserRole(string userId, [FromBody] RoleUpdateRequest request)
         {
@@ -167,7 +168,5 @@ namespace backend.Controllers
                 Message = "Role updated successfully"
             });
         }
-
-
     }
 }
