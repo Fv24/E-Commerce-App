@@ -60,6 +60,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+//JWT Bearer
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

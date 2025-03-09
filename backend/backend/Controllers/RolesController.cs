@@ -95,8 +95,8 @@ namespace backend.Controllers
         }
 
 
-        //api/Roles/asign
-        [HttpPost("asign")]
+        //api/Roles/assign
+        [HttpPost("assign")]
 
         public async Task<IActionResult> AssignRole([FromBody] RoleAssignDTO roleAssignDTO)
         {

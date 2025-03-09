@@ -1,7 +1,6 @@
 ﻿using backend.DTOs;
 using backend.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -119,7 +118,8 @@ namespace backend.Controllers
 
         }
 
-            private string GenerateToken(User user)
+        //Token
+        private string GenerateToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -140,7 +140,7 @@ namespace backend.Controllers
                 claims.Add(new Claim(ClaimTypes.Role, role));
 
             }
-            var tokenDescroptor = new SecurityTokenDescriptor
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddDays(1),
@@ -150,7 +150,7 @@ namespace backend.Controllers
                 )
             };
 
-            var token = tokenHandler.CreateToken(tokenDescroptor);
+            var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);
 
