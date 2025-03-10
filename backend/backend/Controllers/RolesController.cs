@@ -42,7 +42,7 @@ namespace backend.Controllers
             var roleResult = await roleManager.CreateAsync(new IdentityRole(createRoleDTO.RoleName));
 
             if (roleResult.Succeeded) {
-                return Ok(new {message="Role created successfully"});
+                return Ok(new {message = "Role created successfully"});
             }
 
             return BadRequest("Role creation failed.");

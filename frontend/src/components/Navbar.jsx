@@ -5,8 +5,8 @@ import { ShopContext } from '../context/ShopContext';
 const Navbar = () => {
 
   const [visible, setVisible] = useState(false);
-  const { setShowSearch, getCartCount, navigate, token, setToken, setCartItems, userRole } = useContext(ShopContext);
-  
+  const {setShowSearch, getCartCount, navigate, token, setToken, setCartItems, userRole} = useContext(ShopContext);
+
   const logout = () => {
     navigate('/login');
     localStorage.removeItem('token');
@@ -16,6 +16,7 @@ const Navbar = () => {
 
   return (
     <div className='flex items-center justify-between py-5 font-medium'>
+      {/* //Navbar Pages */}
       <Link to='/'><img src='/Images/logo.png' className="w-36" alt="" /></Link>
 
       <ul className='hidden sm:flex gap-5 text-sm text-gray-700'>
@@ -23,7 +24,7 @@ const Navbar = () => {
           <p>HOME</p>
           <hr className='w-2/4 border-none h-[1.5px] bg-gray-700 hidden' />
         </NavLink>
-        
+
         <NavLink to='/collection' className='flex flex-col items-center gap-1'>
           <p>COLLECTION</p>
           <hr className='w-2/4 border-none h-[1.5px] bg-gray-700 hidden' />
@@ -46,7 +47,7 @@ const Navbar = () => {
           </NavLink>
         )}
       </ul>
-
+      {/* Navbar search, login, cart */}
       <div className='flex items-center gap-6'>
         <img onClick={() => setShowSearch(true)} src='/Images/search.png' className='w-5 cursor-pointer' alt='' />
 
@@ -67,7 +68,7 @@ const Navbar = () => {
           <img src='/Images/shopping-cart.png' className='w-5 min-w-5' alt='' />
           <p className='absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px]'>{getCartCount()}</p>
         </Link>
-        
+
         <img onClick={() => setVisible(true)} src='/Images/menu.png' className='w-5 cursor-pointer sm:hidden' alt="" />
       </div>
 

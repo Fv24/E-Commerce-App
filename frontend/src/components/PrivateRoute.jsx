@@ -1,39 +1,37 @@
 import { useContext, useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
-import axios from "axios"; // Make sure axios is imported
+import axios from "axios";
 
-const PrivateRoute = ({ children }) => {
-  const { userRole, setUserRole, token } = useContext(ShopContext);  // Make sure `setUserRole` is available
-  const [loading, setLoading] = useState(true);  // Add loading state
-  const navigate = useNavigate();
+const PrivateRoute = ({children}) => {
+  const {userRole,setUserRole,token } = useContext(ShopContext);  
+  const [loading, setLoading] = useState(true);
 
+  //Get user details
   useEffect(() => {
     if (!userRole && token) {
-      // Nëse roli nuk është ende i vendosur dhe kemi token, e marrim rolin
-      axios
-        .get("http://localhost:5189/api/Auth/detail", {
+      axios.get("http://localhost:5189/api/Auth/detail", {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
           const role = response.data.roles[0];
-          setUserRole(role);  // Vendos rolin në kontekst
+          setUserRole(role);
           setLoading(false);
         })
         .catch(() => setLoading(false));
     } else {
       setLoading(false);
     }
-  }, [userRole, token, setUserRole]);
+  },[userRole, token, setUserRole]);
 
   if (loading) {
-    return <div>Loading...</div>;  // Trego një mesazh ngarkimi nëse ende nuk kemi të dhëna
+    return <div>Loading...</div>;  
   }
 
   if (userRole === "Admin") {
-    return children;  // Render protected routes if user is Admin
+    return children; 
   } else {
-    return <Navigate to="/" />;  // Redirect to home if not Admin
+    return <Navigate to="/" />;
   }
 };
 

@@ -96,7 +96,7 @@ namespace backend.Controllers
                 });
             }
 
-            var result = await userManager.CheckPasswordAsync(user, loginDTO.Password);
+            var result = await userManager.CheckPasswordAsync(user,loginDTO.Password);
 
             if (!result)
             {
@@ -137,7 +137,7 @@ namespace backend.Controllers
 
             foreach (var role in roles)
             {
-                claims.Add(new Claim(ClaimTypes.Role, role));
+                claims.Add(new Claim(ClaimTypes.Role,role));
 
             }
             var tokenDescriptor = new SecurityTokenDescriptor

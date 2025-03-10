@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { ShopContext } from "../../../context/ShopContext";
 
 const UsersList = () => {
-  const { token } = useContext(ShopContext);
+  const {token} = useContext(ShopContext);
   const [users, setUsers] = useState([]);
   const [newRole, setNewRole] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(""); 

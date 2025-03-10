@@ -13,13 +13,10 @@ const ShopContextProvider = (props) => {
   const [showSearch, setShowSearch] = useState(false);
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState({});
- 
-
   const [token,setToken] = useState('')
   const [userRole, setUserRole] = useState(''); 
 
 //Get products from database
-
   useEffect(() => {
     axios.get('http://localhost:5189/api/products')
       .then(response => {
@@ -29,6 +26,26 @@ const ShopContextProvider = (props) => {
         console.error('Error fetching products:', error);
       });
   }, []);
+
+  //User Details
+  useEffect(() => {
+    if (token && !userRole) {
+      axios
+        .get("http://localhost:5189/api/Auth/detail", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          const role = response.data.roles[0];  // Merr rolin nga backend
+          setUserRole(role);
+          localStorage.setItem('role', role);  // Ruaj rolin në localStorage
+        })
+        .catch((error) => {
+          console.error("Error fetching user details:", error);
+        });
+    }
+  }, [token, userRole]);
 
   //Add to cart
   const addToCart = async (itemId, color) => {
@@ -65,24 +82,7 @@ const ShopContextProvider = (props) => {
 
 
 
-  useEffect(() => {
-    if (token && !userRole) {
-      axios
-        .get("http://localhost:5189/api/Auth/detail", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          const role = response.data.roles[0];  // Merr rolin nga backend
-          setUserRole(role);
-          localStorage.setItem('role', role);  // Ruaj rolin në localStorage
-        })
-        .catch((error) => {
-          console.error("Error fetching user details:", error);
-        });
-    }
-  }, [token, userRole]);
+
 
 
  
@@ -223,15 +223,16 @@ const ShopContextProvider = (props) => {
     addToCart,
     setCartItems,
     navigate,
+    setToken,
+    token,
+    userRole,
+    setUserRole,
 
     getCartCount,
     updateQuantity,
     getCartAmount,
   
-    setToken,
-    token,
-    userRole,
-    setUserRole,
+    
 
   };
 
