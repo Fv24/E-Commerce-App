@@ -16,28 +16,39 @@ const Login = () => {
     event.preventDefault();
     try {
       if (currentState === 'Sign Up') {
-        const response = await axios.post("http://localhost:5189/api/Auth/register", {name, email, password});
-
-        if (response.data.success) {
-          const token = response.data.token;
-          setToken(token);
-          localStorage.setItem('token', token);
-          toast.success(response.data.message);
-          //Kalo ne Login pas Register
-          setCurrentState('Login');
-          navigate('/'); //Navigo ne home
+        const registerResponse = await axios.post("http://localhost:5189/api/Auth/register", {
+          name, email, password
+        });
+  
+        if (registerResponse.data.success) {
+          toast.success(registerResponse.data.message);
+  
+          // Pas regjistrimit, bëjmë login automatikisht
+          const loginResponse = await axios.post("http://localhost:5189/api/Auth/login", { 
+            email, password 
+          });
+  
+          if (loginResponse.data.success && loginResponse.data.token) {
+            const token = loginResponse.data.token;
+            setToken(token);
+            localStorage.setItem('token', token);
+            // toast.success("Logged in successfully");
+            navigate('/'); // Navigo në home
+          } else {
+            toast.error("Login after registration failed");
+          }
         } else {
-          toast.error(response.data.message || "Registration failed");
+          toast.error(registerResponse.data.message || "Registration failed");
         }
       } else {
         const response = await axios.post("http://localhost:5189/api/Auth/login", {email, password});
-
+  
         if (response.data.success && response.data.token) {
           const token = response.data.token;
           setToken(token);
           localStorage.setItem('token', token);
           toast.success(response.data.message);
-          navigate('/'); //Navigo ne home
+          navigate('/'); // Navigo në home
         } else {
           toast.error(response.data.message || "Login failed");
         }
@@ -47,7 +58,7 @@ const Login = () => {
       toast.error(error.response?.data?.message || "An error occurred");
     }
   };
-
+  
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
     if (storedToken) {

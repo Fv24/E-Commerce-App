@@ -1,18 +1,31 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext';
 
 const Navbar = () => {
 
   const [visible, setVisible] = useState(false);
-  const {setShowSearch, getCartCount, navigate, token, setToken, setCartItems, userRole} = useContext(ShopContext);
+  const {setShowSearch, getCartCount, navigate, token, setToken, setCartItems, userRole, setUserRole} = useContext(ShopContext);
 
+  //Displaying dashboard based on role
+  useEffect(() => {
+    const role = localStorage.getItem('role');
+    if (role) {
+      setUserRole(role);
+    }
+  }, [token]);  
+ 
   const logout = () => {
-    navigate('/login');
     localStorage.removeItem('token');
+    localStorage.removeItem('role');
     setToken('');
+    setUserRole('');
     setCartItems({});
-  }
+    
+    setTimeout(() => {
+        navigate('/login');
+    }, 100); // Time for processing changes
+  };
 
   return (
     <div className='flex items-center justify-between py-5 font-medium'>

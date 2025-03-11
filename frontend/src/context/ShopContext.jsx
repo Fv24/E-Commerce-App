@@ -18,6 +18,7 @@ const ShopContextProvider = (props) => {
 
 //Get products from database
   useEffect(() => {
+    
     axios.get('http://localhost:5189/api/products')
       .then(response => {
         setProducts(response.data); // Fetch and set products
@@ -29,9 +30,9 @@ const ShopContextProvider = (props) => {
 
   //User Details
   useEffect(() => {
+    
     if (token && !userRole) {
-      axios
-        .get("http://localhost:5189/api/Auth/detail", {
+      axios.get("http://localhost:5189/api/Auth/detail", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -81,14 +82,6 @@ const ShopContextProvider = (props) => {
   };
 
 
-
-
-
-
- 
-
-
-  
   
   
   
