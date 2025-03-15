@@ -13,9 +13,9 @@ const ShopContextProvider = (props) => {
   const [showSearch, setShowSearch] = useState(false);
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState({});
-  const [token,setToken] = useState('')
+  const [token, setToken] = useState('')
   const [userRole, setUserRole] = useState(''); 
-
+  const [cartCount, setCartCount] = useState(''); 
 //Get products from database
   useEffect(() => {
     
@@ -49,7 +49,7 @@ const ShopContextProvider = (props) => {
   }, [token, userRole]);
 
   //Add to cart
-  const addToCart = async (itemId, color) => {
+  const addToCart = async (productId, color) => {
     if (!color) {
       toast.error("Select Product Color");
       return;
@@ -57,35 +57,37 @@ const ShopContextProvider = (props) => {
   
     let cartData = structuredClone(cartItems);
   
-    if (cartData[itemId]) {
-      cartData[itemId][color] = (cartData[itemId][color] || 0) + 1; 
+    if (cartData[productId]) {
+      cartData[productId][color] = (cartData[productId][color] || 0) + 1;
     } else {
-      cartData[itemId] = { [color]: 1 };
+      cartData[productId] = { [color]: 1 };
     }
   
     setCartItems(cartData);
   
-    const productData = products.find((product) => product.id === itemId);
+    const productData = products.find((product) => product.id === productId);
     if (productData) {
       const requestData = {
+        productId: productData.id, // Ensure productId is sent
         productName: productData.name,
         color: color,
-        quantity: cartData[itemId][color],
+        quantity: cartData[productId][color],
         price: productData.price,
       };
   
-      await axios.post("http://localhost:5189/api/Cart", requestData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      toast.success("Product added to cart!");
+      try {
+        await axios.post("http://localhost:5189/api/Cart", requestData, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        toast.success("Product added to cart!");
+      } catch (error) {
+        toast.error("Failed to add product to cart");
+        console.error(error);
+      }
     }
   };
-
-
   
-  
-  
-
+  //Cart Count
   const getCartCount = () => {
     let totalCount = 0;
     for (const items in cartItems) {
@@ -95,49 +97,59 @@ const ShopContextProvider = (props) => {
     }
     return totalCount;
   };
-  const updateQuantity = async (itemId, color, quantity) => {
-    // Create a copy of the cart and update the quantity
-    let cartData = structuredClone(cartItems);
-    cartData[itemId][color] = quantity;
-    setCartItems(cartData); // Update local state
-  
-    if (token) {
-      try {
-        const productData = products.find((product) => product.id === itemId);
-  
-        if (productData) {
-          // Send data to update the cart in the backend
-          const response = await axios.put(
-            'http://localhost:5189/api/Cart',
-            {
-              itemId,  // Product ID
-            color,  // Color
-          quantity,  // Quantity
-         
-            },
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-  
-          if (response.data.success) {
-            // After updating in the backend, get the updated cart
-            await getUserCart(token);
-  
-            // Update localStorage
-            localStorage.setItem('cartItems', JSON.stringify(response.data.cartData));
-  
-            // Update the context with the latest cart data
-            setCartItems(response.data.cartData);
-          }
-        }
-      } catch (error) {
-        console.error('Error updating cart:', error);
-        toast.error('Something went wrong while updating the cart.');
-      }
+
+  //Update Quantity
+  const updateQuantity = async (productId, itemId, color, quantity) => {
+    console.log("🚀 updateQuantity called with:", { productId, itemId, color, quantity });
+
+    if (!productId || !color || quantity < 1) {
+        console.error("❌ Invalid input!");
+        return;
     }
-  };
+
+    if (!token) {
+        console.error("❌ User token is missing!");
+        toast.error("Authentication error. Please log in again.");
+        return;
+    }
+
+    try {
+        const response = await axios.put(
+            "http://localhost:5189/api/cart/update",
+            { ItemId: itemId, ProductId: productId, Color: color, Quantity: quantity },
+            { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (response.data) {
+            console.log("✅ Cart updated:", response.data);
+            toast.success("Cart updated successfully!");
+
+
+            
+            setCartItems((prevCart) => {
+              const updatedCart = {
+                  ...prevCart,
+                  [productId]: {
+                      ...prevCart[productId],
+                      [color]: quantity
+                  }
+              };
+              
+              // ✅ Ensure cart count updates immediately
+              setCartCount(getCartCount(updatedCart));
+              return updatedCart;
+          });
+
   
-  
-  
+       
+        }
+    } catch (error) {
+        console.error("❌ Error updating cart:", error.response ? error.response.data : error.message);
+        toast.error("Something went wrong while updating the cart.");
+    }
+};
+
+  //Get cart amount
   const getCartAmount = () => {
   let totalAmount = 0;
   for (const items in cartItems) {
@@ -202,7 +214,8 @@ const ShopContextProvider = (props) => {
     }
   }, [token]);
   
-  
+
+
   const value = {
     products,
     setProducts,
@@ -220,10 +233,11 @@ const ShopContextProvider = (props) => {
     token,
     userRole,
     setUserRole,
-
     getCartCount,
     updateQuantity,
     getCartAmount,
+    setCartCount,
+    cartCount
   
     
 

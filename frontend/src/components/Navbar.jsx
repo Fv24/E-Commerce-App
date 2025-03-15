@@ -15,17 +15,20 @@ const Navbar = () => {
     }
   }, [token]);  
  
-  const logout = () => {
+const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
+    localStorage.removeItem('cart')
+    
     setToken('');
     setUserRole('');
-    setCartItems({});
-    
+    setCartItems([]); 
+
     setTimeout(() => {
-        navigate('/login');
-    }, 100); // Time for processing changes
-  };
+        navigate('/login'); // Redirect user to login page
+    }, 100); 
+};
+
 
   return (
     <div className='flex items-center justify-between py-5 font-medium'>

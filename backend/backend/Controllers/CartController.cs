@@ -1,4 +1,6 @@
-﻿using backend.Data;
+﻿using Azure.Core;
+using backend.Data;
+using backend.DTOs;
 using backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -48,8 +50,6 @@ namespace backend.Controllers
         }
 
 
-
-        [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddToCart([FromBody] CartItem cartItem)
         {
@@ -59,7 +59,6 @@ namespace backend.Controllers
                 return Unauthorized("User not authenticated");
             }
 
-            // Check if the cart exists
             var cart = await _dbContext.Carts
                 .Include(c => c.Items)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
@@ -71,22 +70,19 @@ namespace backend.Controllers
                 await _dbContext.SaveChangesAsync();
             }
 
-            // Find the existing item in the cart with the same product and color
             var existingCartItem = cart.Items
-                .FirstOrDefault(ci => ci.ProductName == cartItem.ProductName && ci.Color == cartItem.Color);
+                .FirstOrDefault(ci => ci.ProductId == cartItem.ProductId && ci.Color == cartItem.Color);
 
             if (existingCartItem != null)
             {
-                // Update quantity correctly
                 existingCartItem.Quantity += 1;
-
             }
             else
             {
-                // Add new item to cart
                 var newCartItem = new CartItem
                 {
                     CartId = cart.Id,
+                    ProductId = cartItem.ProductId, // Ensure ProductId is stored
                     ProductName = cartItem.ProductName,
                     Color = cartItem.Color,
                     Quantity = cartItem.Quantity,
@@ -100,38 +96,68 @@ namespace backend.Controllers
             return Ok(new { message = "Product added to cart!" });
         }
 
-
-        // PUT: api/Cart
-        [HttpPut]
-        public async Task<IActionResult> UpdateCart([FromBody] CartItem item)
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateCart([FromBody] UpdateCart request)
         {
-            if (item == null) return BadRequest("Invalid cart item data.");
+            Console.WriteLine($"🔹 Received update request: ItemId={request.ItemId}, ProductId={request.ProductId}, Color={request.Color}, Quantity={request.Quantity}");
+
+            if (request == null || request.Quantity < 1)
+                return BadRequest(new { message = "Invalid request data." });
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null) return Unauthorized();
+            if (userId == null)
+                return Unauthorized(new { message = "User not authenticated" });
 
-            // Fetch the user's cart
+            // ✅ Ensure the cart exists and is linked to the user
             var cart = await _dbContext.Carts
                 .Include(c => c.Items)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
 
-            if (cart == null) return NotFound(new { message = "Cart not found" });
+            if (cart == null)
+            {
+                return NotFound(new { message = "Cart not found for user" });
+            }
 
-            // Find the item in the cart
-            var existingItem = cart.Items.FirstOrDefault(i => i.Id == item.Id && i.Color == item.Color);
-            if (existingItem == null) return NotFound(new { message = "Item not found in cart" });
+            // Normalize and trim the color value for comparison
+            var normalizedColor = request.Color.Trim().ToLower();
 
-            // Update the item's quantity to 0 or any other value
-            existingItem.Quantity = item.Quantity;
+            // ✅ Find the correct item in the user's cart
+            var existingItem = cart.Items.FirstOrDefault(i =>
+                i.ProductId == request.ProductId &&
+                i.Color.ToLower() == normalizedColor
+            );
 
-            // Save changes to the cart
-            await _dbContext.SaveChangesAsync();
+            if (existingItem == null)
+            {
+                Console.WriteLine($"❌ Item with ProductId {request.ProductId} and Color {request.Color} not found in user's cart!");
+                return NotFound(new { message = "Item not found in cart", productId = request.ProductId, color = request.Color });
+            }
 
-            // Return the updated cart data
-            return Ok(new { message = "Cart updated", cart = cart.Items });
+            // ✅ Update the quantity and mark it as modified
+            existingItem.Quantity = request.Quantity;
+            _dbContext.CartItems.Update(existingItem);  // Explicitly mark entity as modified
+
+            try
+            {
+                int changes = await _dbContext.SaveChangesAsync();
+                Console.WriteLine($"✅ Database updated: {changes} row(s) affected.");
+
+                if (changes > 0)
+                {
+                    return Ok(new { message = "Quantity updated successfully", cart = cart.Items });
+                }
+                else
+                {
+                    return StatusCode(500, new { message = "Database did not save the changes" });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Database update error: {ex.Message}");
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
         }
 
-      
 
 
     }
