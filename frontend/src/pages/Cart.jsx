@@ -2,96 +2,96 @@ import React, { useContext, useEffect, useState } from 'react'
 import { ShopContext } from '../context/ShopContext'
 import Title from '../components/Title';
 import CartTotal from '../components/CartTotal';
-
 const Cart = () => {
-
-  const {products,currency ,cartItems, updateQuantity, navigate} = useContext(ShopContext);
-  const [cartData,setCartData] = useState([]); 
+  const { products, currency, cartItems, updateQuantity, navigate } = useContext(ShopContext);
+  const [cartData, setCartData] = useState([]);
 
   useEffect(() => {
-
-    if(products.length>0){
-      const tempData = [];
-
-    for(const items in cartItems){
-      for(const item in cartItems[items]){
-        if (cartItems[items][item] > 0) {
-          tempData.push({
-            id: items,
-            color: item,
-            quantity: cartItems[items][item]
-          })
-        }
-      }
+    console.log("CartItems:", cartItems);  // Shiko vlerën e cartItems
+    console.log("Products:", products);    // Shiko vlerën e produkteve
+  
+    if (!Array.isArray(cartItems) || cartItems.length === 0 || !Array.isArray(products) || products.length === 0) {
+      return; // Mos vazhdo nëse të dhënat nuk janë gati ose nuk janë array
     }
+  
+    const tempData = cartItems
+      .filter((item) => item && item.productId && item.id) // Filtron vetëm elementet e vlefshme
+      .map((item) => ({
+        id: item.id,
+        productId: item.productId,
+        color: item.color,
+        quantity: item.quantity,
+      }));
+  
     setCartData(tempData);
-    }
-},[cartItems,products])
+  }, [cartItems, products]);
+  
 
-
-
+  if (!products || products.length === 0 || !cartData || cartData.length === 0) {
+    return <div>Loading...</div>; // Show a loading state or similar
+  }
+  
+  
   return (
     <div className='border-t pt-14'>
+      <div className='text-2xl mb-3'>
+        <Title text1={'YOUR'} text2={'CART'} />
+      </div>
 
-        <div className='text-2xl mb-3'>
-            <Title text1={'YOUR'} text2={'CART'}/>
-        </div>
+      <div>
+        { cartData.map((item, index) => {
+        const productData = products.find((product) => product.id === item.productId);
+        if (!productData) {
+          return <div key={index}>Product not found</div>; // Fallback if the product is not found
+        }
 
-        <div>
-          {
-            cartData.map((item,index) =>{
-              const productData = products.find((product) => product.id == item.id);
-
-                return (
-                  <div key={index} className='py-4 border-t border-b text-gray-700 grid grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4'>
-                    <div className='flex items-start gap-6'>
-                    {productData ? (
-        <img className='w-16 sm:w-20'  src={`/Images/${productData.image}`}  alt={productData.name} />
-      ) : (
-        <img className='w-16 sm:w-20' src="/Images/placeholder.jpg" alt="No Image Available" />
-      )}
-                        <div>
-                          <p className='text-xs sm:text-lg font-medium'>{productData.name}</p>
-                          <div className='flex items-center gap-2 mt-2'>
-                              <p>{currency}{productData.price}</p>
-                              <p className='px-2 sm:px-3 sm:py-1 border bg-slate-50'>{item.color}</p>                                    
-                           </div>
-                        </div>
-                    </div>
-          <input
-  type="number"
-  min={1}
-  defaultValue={item.quantity}
-  onChange={(e) => {
-    const newQuantity = Number(e.target.value);
-    if (newQuantity < 1) return;
-
-    console.log("Debugging Item Data:", item); // Check if productId exists
-
-    updateQuantity(item.productId || item.id, item.id, item.color, newQuantity);
-  }}
-  className="border max-w-10 sm:max-w-20 px-1 sm:px-2 py-1"
-/>
-
-
-
-
-                        <img onClick={() => updateQuantity(item.id, item.color, 0)} className='w-4 mr-4 sm:w-5 cursor-pointer' src='/Images/bin.png' alt="" />
+          return (
+            <div key={index} className='py-4 border-t border-b text-gray-700 grid grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4'>
+              <div className='flex items-start gap-6'>
+                {productData ? (
+                  <img className='w-16 sm:w-20' src={`/Images/${productData.image}`} alt={productData.name} />
+                ) : (
+                  <div className="w-16 sm:w-20 bg-gray-200 flex justify-center items-center">No Image</div>
+                )}
+                <div>
+                  <p className='text-xs sm:text-lg font-medium'>{productData.name}</p>
+                  <div className='flex items-center gap-2 mt-2'>
+                    <p>{currency}{productData.price}</p>
+                    <p className='px-2 sm:px-3 sm:py-1 border bg-slate-50'>{item.color}</p>
                   </div>
-                )
-            })
-          }
-        </div>
-        <div className='flex justify-end my-20'> 
-            <div className='w-full sm:w-[450px]'> 
-                <CartTotal/>
-                <div className='w-full text-end'>
-                  <button onClick={() => navigate('/place-order')} className='bg-black text-white text-sm my-8 px-8 py-3'>PROCEED TO CHECKOUT</button>
                 </div>
+              </div>
+
+              <input
+                type="number"
+                min={1}
+                value={item.quantity} // Mund të përdorni `value` në vend të `defaultValue`
+                onChange={(e) => {
+                  const newQuantity = Number(e.target.value);
+                  if (newQuantity < 1) return;
+
+                  updateQuantity(item.productId, item.id, item.color, newQuantity);
+                }}
+                className="border max-w-10 sm:max-w-20 px-1 sm:px-2 py-1"
+              />
+
+              <img onClick={() => updateQuantity(item.productId, item.id, item.color, 0)} className='w-4 mr-4 sm:w-5 cursor-pointer' src='/Images/bin.png' alt="" />
             </div>
+          );
+        })}
+      </div>
+
+      <div className='flex justify-end my-20'>
+        <div className='w-full sm:w-[450px]'>
+          <CartTotal />
+          <div className='w-full text-end'>
+            <button onClick={() => navigate('/place-order')} className='bg-black text-white text-sm my-8 px-8 py-3'>PROCEED TO CHECKOUT</button>
+          </div>
         </div>
+      </div>
     </div>
-  )
+  );
 }
+
 
 export default Cart

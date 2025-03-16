@@ -15,7 +15,7 @@ const Navbar = () => {
     }
   }, [token]);  
  
-const logout = () => {
+  const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
     localStorage.removeItem('cart')
