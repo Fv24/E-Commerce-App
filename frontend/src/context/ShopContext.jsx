@@ -133,9 +133,6 @@ const ShopContextProvider = (props) => {
     }
   };
   
-  
-  
-  
   //Update Quantity
   const updateQuantity = async (productId, itemId, color, quantity) => {
   
@@ -234,7 +231,6 @@ const ShopContextProvider = (props) => {
     const storedCart = localStorage.getItem('cartItems');
     if (storedCart) {
       setCartItems(JSON.parse(storedCart));  // Set cart from localStorage if available
-   
     }
   }, []);
   

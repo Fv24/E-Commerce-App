@@ -144,30 +144,33 @@ const UsersList = () => {
         </thead>
         <tbody>
           {users.map((user) => (
-            <tr key={user.id} className="border border-gray-200 border-b hover:bg-gray-100">
+            <tr key={user.id || user.email} className="border border-gray-200 border-b hover:bg-gray-100">
               <td className="px-2 md:px-6 py-2 md:py-4">{user.name}</td>
               <td className="px-2 md:px-6 py-2 md:py-4">{user.email}</td>
               <td className="px-2 md:px-6 py-2 md:py-4">{user.roles.join(", ")}</td>
               <td className="px-2 md:px-6 py-2 md:py-4">
                 <div className="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-2">
-                  <select
-                    value={selectedUserId === user.id ? newRole : ""}
-                    onChange={(e) => {
-                      setSelectedUserId(user.id);
-                      setNewRole(e.target.value);
-                    }}
-                    className="px-2 py-1 md:px-4 md:py-2 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  >
-                    <option value="">Choose role</option>
-                    <option value="Admin">Admin</option>
-                    <option value="User">User</option>
-                  </select>
-                  <button
-                    onClick={() => handleRoleChange(user.id)}
-                    className="bg-pink-500 text-white px-2 py-1 md:px-4 md:py-2 rounded-md hover:bg-pink-600 transition-all"
-                  >
-                    Update Role
-                  </button>
+                    <select
+                      value={selectedUserId === user.id ? newRole : ""}
+                      onChange={(e) => {
+                        setSelectedUserId(user.id);
+                        setNewRole(e.target.value);
+                      }}
+                      className="px-2 py-1 md:px-4 md:py-2 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    >
+                      <option value="">Choose role</option>
+                      {roles.map((role) => (
+                        <option key={role.id} value={role.name}>
+                          {role.name}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={() => handleRoleChange(user.id)}
+                      className="bg-pink-500 text-white px-2 py-1 md:px-4 md:py-2 rounded-md hover:bg-pink-600 transition-all"
+                    >
+                      Update Role
+                    </button>
                 </div>
               </td>
             </tr>
@@ -185,7 +188,7 @@ const UsersList = () => {
         </thead>
         <tbody>
           {roles.map((role) => (
-            <tr key={role.id} className="border border-gray-300 border-b hover:bg-gray-100">
+            <tr key={role.id || role.name} className="border border-gray-300 border-b hover:bg-gray-100">
               <td className="px-6 py-4">{role.name}</td>
               <td className="px-6 py-4">
                 <button
