@@ -125,7 +125,7 @@ namespace backend.Controllers
 
         //api/Roles/update-role/{userId}
         [HttpPut("update-role/{userId}")]
-        public async Task<ActionResult> UpdateUserRole(string userId, [FromBody] RoleUpdateRequest request)
+        public async Task<ActionResult> UpdateUserRole(string userId, [FromBody] RoleUpdateRequestDTO request)
         {
             var user = await userManager.FindByIdAsync(userId);
 

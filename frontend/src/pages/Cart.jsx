@@ -2,21 +2,19 @@ import React, { useContext, useEffect, useState } from 'react'
 import { ShopContext } from '../context/ShopContext'
 import Title from '../components/Title';
 import CartTotal from '../components/CartTotal';
+
 const Cart = () => {
-  const { products, currency, cartItems, updateQuantity, navigate } = useContext(ShopContext);
+  const { products, currency, cartItems, updateQuantity, navigate, removeFromCart } = useContext(ShopContext);
   const [cartData, setCartData] = useState([]);
 
   useEffect(() => {
-    console.log("CartItems:", cartItems);  // Shiko vlerën e cartItems
-    console.log("Products:", products);    // Shiko vlerën e produkteve
-  
+
     if (!Array.isArray(cartItems) || cartItems.length === 0 || !Array.isArray(products) || products.length === 0) {
-      return; // Mos vazhdo nëse të dhënat nuk janë gati ose nuk janë array
+      return; 
     }
-  
-    const tempData = cartItems
-      .filter((item) => item && item.productId && item.id) // Filtron vetëm elementet e vlefshme
-      .map((item) => ({
+
+    const tempData = cartItems.filter((item) => item && item.productId && item.id) 
+    .map((item) => ({
         id: item.id,
         productId: item.productId,
         color: item.color,
@@ -24,13 +22,13 @@ const Cart = () => {
       }));
   
     setCartData(tempData);
+
   }, [cartItems, products]);
   
 
   if (!products || products.length === 0 || !cartData || cartData.length === 0) {
-    return <div>Loading...</div>; // Show a loading state or similar
+    return <div>Loading...</div>; 
   }
-  
   
   return (
     <div className='border-t pt-14'>
@@ -39,11 +37,9 @@ const Cart = () => {
       </div>
 
       <div>
-        { cartData.map((item, index) => {
+        {cartData.map((item, index) => {
+
         const productData = products.find((product) => product.id === item.productId);
-        if (!productData) {
-          return <div key={index}>Product not found</div>; // Fallback if the product is not found
-        }
 
           return (
             <div key={index} className='py-4 border-t border-b text-gray-700 grid grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4'>
@@ -53,29 +49,22 @@ const Cart = () => {
                 ) : (
                   <div className="w-16 sm:w-20 bg-gray-200 flex justify-center items-center">No Image</div>
                 )}
-                <div>
-                  <p className='text-xs sm:text-lg font-medium'>{productData.name}</p>
-                  <div className='flex items-center gap-2 mt-2'>
-                    <p>{currency}{productData.price}</p>
-                    <p className='px-2 sm:px-3 sm:py-1 border bg-slate-50'>{item.color}</p>
+                  <div>
+                    <p className='text-xs sm:text-lg font-medium'>{productData.name}</p>
+                    <div className='flex items-center gap-2 mt-2'>
+                      <p>{currency}{productData.price}</p>
+                      <p className='px-2 sm:px-3 sm:py-1 border bg-slate-50'>{item.color}</p>
+                    </div>
                   </div>
-                </div>
               </div>
-
-              <input
-                type="number"
-                min={1}
-                value={item.quantity} // Mund të përdorni `value` në vend të `defaultValue`
-                onChange={(e) => {
-                  const newQuantity = Number(e.target.value);
-                  if (newQuantity < 1) return;
-
-                  updateQuantity(item.productId, item.id, item.color, newQuantity);
-                }}
-                className="border max-w-10 sm:max-w-20 px-1 sm:px-2 py-1"
-              />
-
-              <img onClick={() => updateQuantity(item.productId, item.id, item.color, 0)} className='w-4 mr-4 sm:w-5 cursor-pointer' src='/Images/bin.png' alt="" />
+                <input type="number" min={1} value={item.quantity} onChange={(e) => {
+                    const newQuantity = Number(e.target.value);
+                    if (newQuantity < 1) return;
+                    updateQuantity(item.productId, item.id, item.color, newQuantity);
+                  }}
+                  className="border max-w-10 sm:max-w-20 px-1 sm:px-2 py-1"
+                />
+                <img onClick={() => removeFromCart(item.productId, item.color)} className='w-4 mr-4 sm:w-5 cursor-pointer' src='/Images/bin.png' alt="Remove Item"/>
             </div>
           );
         })}

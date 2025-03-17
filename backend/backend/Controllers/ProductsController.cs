@@ -67,7 +67,7 @@ namespace backend.Controllers
 
         [HttpPut("{id}")]
 
-        public IActionResult UpdateProduct(int id, UpdateCartRequest updateProduct)
+        public IActionResult UpdateProduct(int id, UpdateProductDTO updateProduct)
         {
             var product = dbContext.Products.Find(id);
 

@@ -6,9 +6,9 @@ namespace backend.Models
     {
         public int Id { get; set; }
         public int CartId { get; set; }
+
         [JsonIgnore]
         public Cart? Cart { get; set; }
-
         public int ProductId { get; set; }
         public required string ProductName { get; set; }
         public required string Color { get; set; }

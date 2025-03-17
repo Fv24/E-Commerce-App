@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using backend.Data;
+﻿using backend.Data;
 using backend.DTOs;
 using backend.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -21,7 +20,7 @@ namespace backend.Controllers
             _dbContext = dbContext;
         }
 
-        // GET: api/Cart
+        //GET /api/Cart
         [HttpGet]
         public async Task<IActionResult> GetCart()
         {
@@ -49,7 +48,7 @@ namespace backend.Controllers
             }
         }
 
-
+        //AddCart
         [HttpPost]
         public async Task<IActionResult> AddToCart([FromBody] CartItem cartItem)
         {
@@ -82,7 +81,7 @@ namespace backend.Controllers
                 var newCartItem = new CartItem
                 {
                     CartId = cart.Id,
-                    ProductId = cartItem.ProductId, // Ensure ProductId is stored
+                    ProductId = cartItem.ProductId,
                     ProductName = cartItem.ProductName,
                     Color = cartItem.Color,
                     Quantity = cartItem.Quantity,
@@ -90,17 +89,19 @@ namespace backend.Controllers
                 };
 
                 _dbContext.CartItems.Add(newCartItem);
+                await _dbContext.SaveChangesAsync();
+
+                return Ok(newCartItem);
             }
 
             await _dbContext.SaveChangesAsync();
-            return Ok(new { message = "Product added to cart!" });
+            return Ok(existingCartItem); 
         }
 
+        //UpdateQuantity
         [HttpPut("update")]
-        public async Task<IActionResult> UpdateCart([FromBody] UpdateCart request)
+        public async Task<IActionResult> UpdateCart([FromBody] UpdateCartDTO request)
         {
-            Console.WriteLine($"🔹 Received update request: ItemId={request.ItemId}, ProductId={request.ProductId}, Color={request.Color}, Quantity={request.Quantity}");
-
             if (request == null || request.Quantity < 1)
                 return BadRequest(new { message = "Invalid request data." });
 
@@ -108,7 +109,6 @@ namespace backend.Controllers
             if (userId == null)
                 return Unauthorized(new { message = "User not authenticated" });
 
-            // ✅ Ensure the cart exists and is linked to the user
             var cart = await _dbContext.Carts
                 .Include(c => c.Items)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
@@ -118,10 +118,8 @@ namespace backend.Controllers
                 return NotFound(new { message = "Cart not found for user" });
             }
 
-            // Normalize and trim the color value for comparison
             var normalizedColor = request.Color.Trim().ToLower();
 
-            // ✅ Find the correct item in the user's cart
             var existingItem = cart.Items.FirstOrDefault(i =>
                 i.ProductId == request.ProductId &&
                 i.Color.ToLower() == normalizedColor
@@ -129,18 +127,15 @@ namespace backend.Controllers
 
             if (existingItem == null)
             {
-                Console.WriteLine($"❌ Item with ProductId {request.ProductId} and Color {request.Color} not found in user's cart!");
                 return NotFound(new { message = "Item not found in cart", productId = request.ProductId, color = request.Color });
             }
 
-            // ✅ Update the quantity and mark it as modified
             existingItem.Quantity = request.Quantity;
-            _dbContext.CartItems.Update(existingItem);  // Explicitly mark entity as modified
+            _dbContext.CartItems.Update(existingItem); 
 
             try
             {
                 int changes = await _dbContext.SaveChangesAsync();
-                Console.WriteLine($"✅ Database updated: {changes} row(s) affected.");
 
                 if (changes > 0)
                 {
@@ -153,12 +148,44 @@ namespace backend.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Database update error: {ex.Message}");
                 return StatusCode(500, new { message = "Internal server error", error = ex.Message });
             }
         }
 
+        //RemoveItem
+        [HttpDelete("remove")]
+        public async Task<IActionResult> RemoveItem([FromBody] RemoveCartItemDTO request)
+        {
+            if (request == null || request.ProductId == 0 || string.IsNullOrWhiteSpace(request.Color))
+                return BadRequest(new { message = "Invalid request data." });
 
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return Unauthorized(new { message = "User not authenticated" });
 
+            var cart = await _dbContext.Carts
+                .Include(c => c.Items)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+
+            if (cart == null || !cart.Items.Any())
+                return NotFound(new { message = "Cart is empty or does not exist" });
+
+            var normalizedColor = request.Color.Trim().ToLower();
+
+            var itemToRemove = cart.Items.FirstOrDefault(i =>
+                i.ProductId == request.ProductId &&
+                i.Color.ToLower() == normalizedColor
+            );
+
+            if (itemToRemove == null)
+            {
+                return NotFound(new { message = "Item not found in cart", productId = request.ProductId, color = request.Color });
+            }
+
+            _dbContext.CartItems.Remove(itemToRemove);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Item removed successfully", cart = cart.Items });
+        }
     }
 }

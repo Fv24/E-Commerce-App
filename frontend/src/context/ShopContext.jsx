@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 export const ShopContext = createContext();
 
 const ShopContextProvider = (props) => {
+
   const [products, setProducts] = useState([]); // Define products state
   const currency = '€';
   const delivery_free = 10;
@@ -16,7 +17,8 @@ const ShopContextProvider = (props) => {
   const [token, setToken] = useState('')
   const [userRole, setUserRole] = useState(''); 
   const [cartCount, setCartCount] = useState(''); 
-//Get products from database
+
+  //Get products from database
   useEffect(() => {
     
     axios.get('http://localhost:5189/api/products')
@@ -38,9 +40,9 @@ const ShopContextProvider = (props) => {
           },
         })
         .then((response) => {
-          const role = response.data.roles[0];  // Merr rolin nga backend
+          const role = response.data.roles[0];  // Get role from backend
           setUserRole(role);
-          localStorage.setItem('role', role);  // Ruaj rolin në localStorage
+          localStorage.setItem('role', role);  // Save role in local storage
         })
         .catch((error) => {
           console.error("Error fetching user details:", error);
@@ -48,8 +50,28 @@ const ShopContextProvider = (props) => {
     }
   }, [token, userRole]);
 
+  //Get User Cart
+  const getUserCart = async (token) => {
+    try {
+      const response = await axios.get('http://localhost:5189/api/Cart', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (response.data && response.data.items) {
+        setCartItems(response.data.items); 
+        localStorage.setItem('cartItems', JSON.stringify(response.data.items)); 
+      }
+    } catch (error) {
+      toast.error("Error while geting cart: " + error.message);
+      console.error("Error:", error);
+    }
+  };
+
   //Add to cart
   const addToCart = async (productId, color) => {
+
     if (!color) {
       toast.error("Select Product Color");
       return;
@@ -67,75 +89,62 @@ const ShopContextProvider = (props) => {
     );
   
     if (existingItemIndex !== -1) {
-      // Ensure valid quantity
-      cartData[existingItemIndex].quantity = cartData[existingItemIndex].quantity || 0;
       cartData[existingItemIndex].quantity += 1;
     } else {
       cartData.push({
         productId,
         color,
-        quantity: 1,  // Ensure quantity is initialized
-        // Add other details like product name, price, etc.
+        quantity: 1
       });
     }
   
-    // Remove any null or undefined items
     cartData = cartData.filter(item => item != null);
   
     setCartItems(cartData);
   
     const productData = products.find(product => product.id === productId);
+  
     if (productData) {
       const requestData = {
         productId: productData.id,
         productName: productData.name,
         color: color,
-        quantity: 1,  // Since it's being added, initialize quantity as 1
+        quantity: 1,
         price: productData.price,
       };
   
       try {
-        await axios.post("http://localhost:5189/api/Cart", requestData, {
+        const response = await axios.post("http://localhost:5189/api/Cart", requestData, {
           headers: { Authorization: `Bearer ${token}` },
         });
+  
+        await getUserCart(token);
+  
         toast.success("Product added to cart!");
+  
       } catch (error) {
         toast.error("Failed to add product to cart");
         console.error(error);
       }
+  
     } else {
       toast.error("Product not found");
       console.log(`Product with id ${productId} not found in products.`);
     }
   };
   
-
   
-const getCartCount = () => {
-  let totalCount = 0;
-
-  // If cartItems is an object, iterate over the keys (productId)
-  Object.keys(cartItems).forEach(productId => {
-    const item = cartItems[productId];
-    totalCount += item.quantity || 1;  // Assuming each item has a 'quantity' field
-  });
-
-  return totalCount;
-};
-
-
   
-
+  
+  //Update Quantity
   const updateQuantity = async (productId, itemId, color, quantity) => {
-    console.log("🚀 updateQuantity called with:", { productId, itemId, color, quantity });
   
     if (!productId || !color || quantity < 1) {
-      console.error("❌ Invalid input!");
+      console.error("Invalid input!");
       return;
     }
   
     if (!token) {
-      console.error("❌ User token is missing!");
       toast.error("Authentication error. Please log in again.");
       return;
     }
@@ -148,99 +157,76 @@ const getCartCount = () => {
       );
   
       if (response.data) {
-        console.log("✅ Cart updated:", response.data);
-  
-        // Përditësoni cartItems me të dhënat e reja të karrocës nga përgjigjja
+
         setCartItems(response.data.cart);
-  
-        // Përditësoni cartCount
+
         setCartCount(getCartCount(response.data.cart));
   
-        toast.success(response.data.message);  // Mesazh suksesi për përdoruesin
+        toast.success(response.data.message); 
       }
     } catch (error) {
-      console.error("❌ Error updating cart:", error.response ? error.response.data : error.message);
+      console.error("Error updating cart:", error.response ? error.response.data : error.message);
       toast.error("Something went wrong while updating the cart.");
     }
   };
+
+  //RemoveCartItems
+  const removeFromCart = async (productId, color) => {
+
+    if (!productId || !color) {
+      toast.error("Invalid item details");
+      return;
+    }
   
+    if (!token) {
+      toast.error("User not authenticated");
+      return;
+    }
+  
+    try {
+      await axios.delete("http://localhost:5189/api/Cart/remove", {
+        headers: { Authorization: `Bearer ${token}` },
+        data: { productId, color }, 
+      });
+      setCartItems(prevItems => prevItems.filter(item => !(item.productId === productId && item.color === color)));
+      toast.success("Item removed from cart");
+    } catch (error) {
+      toast.error("Failed to remove item from cart");
+      console.error("Error removing item:", error.response ? error.response.data : error.message);
+    }
+  };
+
+  //GetCart Count
+  const getCartCount = () => {
+    let totalCount = 0;
+
+    Object.keys(cartItems).forEach(productId => {
+      const item = cartItems[productId];
+      totalCount += item.quantity || 1; 
+    });
+
+    return totalCount;
+  };
 
   //Get cart amount
   const getCartAmount = () => {
-  let totalAmount = 0;
-  for (const items in cartItems) {
-    let itemInfo = products.find((product) => product.id === Number(items)); // Konverto në numër
-    if (itemInfo) {
-      for (const item in cartItems[items]) {
-        totalAmount += itemInfo.price * (cartItems[items][item] || 0);
+    let totalAmount = 0;
+
+    cartItems.forEach(item => {
+      const productInfo = products.find(product => product.id === item.productId);
+      if (productInfo) {
+        totalAmount += productInfo.price * item.quantity;
       }
-    }
-  }
-  return totalAmount;
-};
-
-// const fetchCart = async () => {
-//   if (!token) return;
-
-//   try {
-//       const response = await axios.get("http://localhost:5189/api/cart", {
-//           headers: { Authorization: `Bearer ${token}` }
-//       });
-
-//       if (response.data) {
-//           console.log("✅ Cart fetched:", response.data);
-//           setCartItems(response.data); // Update cart state
-//           setCartCount(getCartCount(response.data));
-//       }
-//   } catch (error) {
-//       console.error("❌ Error fetching cart:", error.message);
-//   }
-// };
-
-// // Fetch cart when user logs in or visits the cart page
-// useEffect(() => {
-//   fetchCart();
-// }, [token]); // Runs when the token (user login state) changes
-
-
-const getUserCart = async (token) => {
-  try {
-    const response = await axios.get('http://localhost:5189/api/Cart', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
     });
-
-    if (response.data && response.data.items) {
-      console.log("Karroca u mor nga backend:", response.data); // Verifiko të dhënat
-      setCartItems(response.data.items); // Vendosim items nga backend në state
-      localStorage.setItem('cartItems', JSON.stringify(response.data.items)); // Ruajmë në localStorage
-    }
-  } catch (error) {
-    toast.error("Gabim gjatë marrjes së karrocës: " + error.message);
-    console.error("❌ Gabim:", error);
-  }
-};
-
-useEffect(() => {
-  console.log("Cart Items u përditësuan:", cartItems); // Kjo do të logojë çdo ndryshim në cartItems
-}, [cartItems]);
-
-useEffect(() => {
-  const storedCart = localStorage.getItem('cartItems');
-  if (storedCart) {
-    setCartItems(JSON.parse(storedCart));  // Vendos të dhënat e karrocës nga localStorage
-    console.log("Karroca u ngarkua nga localStorage:", storedCart);
-  }
-}, []);
-
-
   
- 
+    return totalAmount;
+  };
+  
+ //Token and cart
   useEffect(() => {
+    //Get token and cart
     if (!token && localStorage.getItem('token')) {
       const storedToken = localStorage.getItem('token');
-      console.log("Found token in localStorage:", storedToken);
       setToken(storedToken);
       getUserCart(storedToken);
     }
@@ -248,27 +234,23 @@ useEffect(() => {
     const storedCart = localStorage.getItem('cartItems');
     if (storedCart) {
       setCartItems(JSON.parse(storedCart));  // Set cart from localStorage if available
-      console.log("Cart found in localStorage:", storedCart);
+   
     }
   }, []);
   
-
+  //Save cart in local storage
   useEffect(() => {
     if (cartItems) {
-      console.log("Cart data before updating localStorage:", cartItems);
-      localStorage.setItem('cartItems', JSON.stringify(cartItems));  // Ruaj karrocën në localStorage
+      localStorage.setItem('cartItems', JSON.stringify(cartItems)); 
     }
   }, [cartItems]);
   
-
+  //Get user cart based on the token (user)
   useEffect(() => {
     if (token) {
-      console.log("Token is set:", token);
-      getUserCart(token); // Kontrolloni këtu nëse getUserCart është duke u thirrur siç duhet
+      getUserCart(token); 
     }
   }, [token]);
-  
-
 
   const value = {
     products,
@@ -291,10 +273,8 @@ useEffect(() => {
     updateQuantity,
     getCartAmount,
     setCartCount,
-    cartCount
-  
-    
-
+    cartCount,
+    removeFromCart
   };
 
   return (

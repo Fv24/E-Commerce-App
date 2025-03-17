@@ -22,9 +22,7 @@ import ListProducts from './pages/admin/products/ListProducts';
 import PrivateRoute from './components/PrivateRoute';
 import UserDetails from './pages/admin/users/UserDetails';
 
-
 const App = () => {
-
 
   return (
     <div className='px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'>

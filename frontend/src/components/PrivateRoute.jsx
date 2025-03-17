@@ -4,7 +4,8 @@ import { ShopContext } from "../context/ShopContext";
 import axios from "axios";
 
 const PrivateRoute = ({children}) => {
-  const {userRole,setUserRole,token } = useContext(ShopContext);  
+  
+  const {userRole, setUserRole, token } = useContext(ShopContext);  
   const [loading, setLoading] = useState(true);
 
   //Get user details

@@ -1,6 +1,6 @@
 ﻿namespace backend.DTOs
 {
-    public class RoleUpdateRequest
+    public class RoleUpdateRequestDTO
     {
         public required string Role { get; set; }
     }
