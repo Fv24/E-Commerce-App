@@ -7,8 +7,8 @@ import axios from 'axios'
 
 const PlaceOrder = () => {
 
-  const [method,setMethod] = useState('cod');
-  const{navigate,token,cartItems,setCartItems,getCartAmount,delivery_free,products} = useContext(ShopContext);
+  const [ method, setMethod ] = useState('cod');
+  const{ navigate,token,cartItems,setCartItems,getCartAmount,delivery_free,products } = useContext(ShopContext);
 
   const [formData, setFormData] = useState({
     firstName:'',
@@ -29,73 +29,61 @@ const PlaceOrder = () => {
     setFormData(data => ({...data,[name]:value}))
   }
 
-  console.log('Cart Items:', cartItems);
-
-
   const onSubmitHandler = async (event) => {
     event.preventDefault();
- 
-    try {
-      let orderItems = [];
   
-      for (const items in cartItems) {
-        for (const item in cartItems[items]) {
-          if (cartItems[items][item] > 0) {
-            const itemInfo = structuredClone(products.find(product => product.id === item));
+    try {
 
-            if (itemInfo) {
-              itemInfo.color = item;
-              itemInfo.quantity = cartItems[items][item];
-              orderItems.push(itemInfo);
-            }
+      let orderItems = [];
+
+      for (const item of cartItems) {
+        if (item.quantity > 0) {
+
+          const productInfo = products.find(product => product.id === item.productId);
+
+          if (productInfo) {
+            orderItems.push({
+              ProductId: productInfo.id, 
+              Quantity: item.quantity,
+              Color: item.color,
+              ProductName: productInfo.name
+            });
           }
         }
       }
   
-     let orderData = {
-          address: formData,
-          items:orderItems,
-          amount: getCartAmount() + delivery_free
-     }
-
-     switch(method) {
-      /* API CALLS FOR CASH ORDER */
-      case 'cod':
-        const response = await axios.get('http://localhost:5189/api/Order/PlaceOrder', orderData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        console.log(response.data);
-        if (response.data.success) {
-          setCartItems({});
-          navigate('/orders');
-        } else {
-          toast.error(response.data.message);
-        }
-        break;
-    
-      default:
-        break;
-    }
-    
-    
-    
-     
+      let orderData = {
+        address: `${formData.street}, ${formData.city}, ${formData.state}, ${formData.zipcode}, ${formData.country}`,
+        items: orderItems,
+        amount: getCartAmount() + delivery_free,
+        paymentMethod: method,
+        payment: method !== "cod", // If it's not "cod", set payment to true else false
+      };
   
+      const response = await axios.post('http://localhost:5189/api/Order/PlaceOrder', orderData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (response.data.success) {
+        setCartItems([]);
+        setFormData({});
+        navigate('/orders');
+      } else {
+        toast.error(response.data.message);
+      }
+
     } catch (error) {
       console.error('Error during order submission:', error);
+      toast.error('An error occurred during order submission.');
     }
   };
-  
-
-
 
   return (
     <form onSubmit={onSubmitHandler} className='flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh] border-t'>
       {/* Left side */}
       <div className='flex flex-col gap-4 w-full sm:max-w-[480px]'>
-
         <div className='text-xl sm:text=2xl my-3'>
             <Title text1={"DELIVERY"} text2={'INFORMATION'}/>
         </div>
@@ -115,13 +103,12 @@ const PlaceOrder = () => {
         </div>
         <input required onChange={onChangeHandler} name='phone' value={formData.phone} className='border border-gray-300 rounded py-1.5 px-3.5 w-full' placeholder='Phone' type="number" />
       </div>
+
       {/* Right Side */}
       <div className='mt-8'>
-
         <div className='mt-8 min-w-80'>
             <CartTotal/>
         </div>
-
         <div className='mt-12'>
             <Title text1={'PAYMENT'} text2={'METHOD'}/>
             {/* Payment Method Selection */}
@@ -140,9 +127,9 @@ const PlaceOrder = () => {
                 </div>
             </div>
 
-          <div className='w-full text-end mt-8'>
-              <button type='submit'  className='bg-black text-white px-16 py-3 text-sm'>PLACE ORDER</button>
-          </div>
+            <div className='w-full text-end mt-8'>
+                <button type='submit' className='bg-black text-white px-16 py-3 text-sm'>PLACE ORDER</button>
+            </div>
 
         </div>
       </div>

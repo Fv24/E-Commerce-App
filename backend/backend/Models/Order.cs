@@ -4,9 +4,9 @@
     {
         public int Id { get; set; }
 
-        public int UserId { get; set; }
+        public string? UserId { get; set; }
 
-        public List<CartItem> Items { get; set; } = new List<CartItem>();
+        public List<OrderItem> Items { get; set; } = new List<OrderItem>();
 
         public double Amount { get; set; }
 

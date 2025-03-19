@@ -5,18 +5,18 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace backend.Migrations
 {
-    public partial class OrderFunctionMigration : Migration
+    /// <inheritdoc />
+    public partial class OrderTable : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            // Adding OrderId column to CartItems table
             migrationBuilder.AddColumn<int>(
                 name: "OrderId",
                 table: "CartItems",
                 type: "int",
                 nullable: true);
 
-            // Creating the Orders table
             migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
@@ -36,13 +36,11 @@ namespace backend.Migrations
                     table.PrimaryKey("PK_Orders", x => x.Id);
                 });
 
-            // Adding an index for OrderId column in CartItems table
             migrationBuilder.CreateIndex(
                 name: "IX_CartItems_OrderId",
                 table: "CartItems",
                 column: "OrderId");
 
-            // Adding foreign key for CartItems to Orders
             migrationBuilder.AddForeignKey(
                 name: "FK_CartItems_Orders_OrderId",
                 table: "CartItems",
@@ -51,22 +49,20 @@ namespace backend.Migrations
                 principalColumn: "Id");
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            // Dropping foreign key and index
             migrationBuilder.DropForeignKey(
                 name: "FK_CartItems_Orders_OrderId",
                 table: "CartItems");
+
+            migrationBuilder.DropTable(
+                name: "Orders");
 
             migrationBuilder.DropIndex(
                 name: "IX_CartItems_OrderId",
                 table: "CartItems");
 
-            // Dropping Orders table
-            migrationBuilder.DropTable(
-                name: "Orders");
-
-            // Dropping OrderId column from CartItems table
             migrationBuilder.DropColumn(
                 name: "OrderId",
                 table: "CartItems");

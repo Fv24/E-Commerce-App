@@ -1,9 +1,11 @@
 ﻿using backend.Data;
+using backend.DTOs;
 using backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System.Security.Claims; 
 
 namespace backend.Controllers
 {
@@ -18,27 +20,76 @@ namespace backend.Controllers
             _dbContext = dbContext;
         }
 
-        // Place Order
+        //Create Order
+        [Authorize]
         [HttpPost("PlaceOrder")]
-        public ActionResult<Order> PlaceOrder([FromBody] Order order)
+        public async Task<IActionResult> PlaceOrder([FromBody] PlaceOrderRequestDTO request)
         {
-            // Validate the incoming request data
-            if (order.Items == null || order.Items.Count == 0)
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId == null)
             {
-                return BadRequest("Order must contain at least one item.");
+                return Unauthorized(new { message = "User not authenticated" });
             }
 
-          
+            if (request == null || request.Items == null || request.Items.Count == 0)
+            {
+                return BadRequest(new { message = "Invalid order data." });
+            }
 
-            // Add the order to the database
-            _dbContext.Orders.Add(order);
-            _dbContext.SaveChanges();
+            try
+            {
+                var cart = await _dbContext.Carts
+                    .Include(c => c.Items) 
+                    .FirstOrDefaultAsync(c => c.UserId == userId);
 
-            // Return the created order with a 201 Created status and location header
-            return CreatedAtAction(nameof(GetOrderById), new { id = order.Id }, order);
+                if (cart == null || cart.Items == null || cart.Items.Count == 0)
+                {
+                    return BadRequest(new { message = "Cart is empty or not found." });
+                }
+
+                var order = new Order
+                {
+                    UserId = userId,
+                    Address = request.Address,
+                    Amount = request.Amount,
+                    PaymentMethod = request.PaymentMethod,
+                    Date = DateTime.Now,
+                    Status = "Order Placed",
+                    Payment = request.Payment ? true : false // If method is cod is false
+                };
+
+                foreach (var item in request.Items)
+                {
+                    order.Items.Add(new OrderItem
+                    {
+                        ProductId = item.ProductId,
+                        Quantity = item.Quantity,
+                        Color = item.Color,
+                        ProductName = item.ProductName,
+                    });
+
+                    var cartItem = cart.Items.FirstOrDefault(ci => ci.ProductId == item.ProductId);
+                    if (cartItem != null)
+                    {
+                        _dbContext.CartItems.Remove(cartItem);
+                    }
+                }
+
+                _dbContext.Orders.Add(order);
+                await _dbContext.SaveChangesAsync(); 
+
+                await _dbContext.SaveChangesAsync();
+
+                return Ok(new { success = true, message = "Order placed successfully", orderId = order.Id });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = "An error occurred while placing the order.", error = ex.Message });
+            }
         }
 
-        // Place Order with Stripe
         [HttpPost("PlaceOrderSTRIPE")]
         public ActionResult<Order> PlaceOrderSTRIPE([FromBody] Order order)
         {
@@ -78,15 +129,15 @@ namespace backend.Controllers
             return Ok(orders); // Return all orders
         }
 
-        // Get orders for a specific user
-        [HttpGet("UserOrderData/{userId}")]
-        public ActionResult<IEnumerable<Order>> UserOrderData(int userId)
-        {
-            var userOrders = _dbContext.Orders.Where(o => o.UserId == userId).ToList();
-            if (!userOrders.Any())
-                return NotFound("No orders found for this user.");
-            return Ok(userOrders);
-        }
+        //// Get orders for a specific user
+        //[HttpGet("UserOrderData/{userId}")]
+        //public ActionResult<IEnumerable<Order>> UserOrderData(int userId)
+        //{
+        //    var userOrders = _dbContext.Orders.Where(o => o.UserId == userId).ToList();
+        //    if (!userOrders.Any())
+        //        return NotFound("No orders found for this user.");
+        //    return Ok(userOrders);
+        //}
 
         // Update order status
         [HttpPut("UpdateStatus/{id}")]
@@ -110,5 +161,7 @@ namespace backend.Controllers
                 return NotFound("Order not found.");
             return Ok(order);
         }
+
+
     }
 }

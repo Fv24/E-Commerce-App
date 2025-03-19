@@ -207,8 +207,12 @@ const ShopContextProvider = (props) => {
 
   //Get cart amount
   const getCartAmount = () => {
+    if (!Array.isArray(cartItems)) {
+      return 0;  // Return 0 or some default value
+    }
+    
     let totalAmount = 0;
-
+  
     cartItems.forEach(item => {
       const productInfo = products.find(product => product.id === item.productId);
       if (productInfo) {
