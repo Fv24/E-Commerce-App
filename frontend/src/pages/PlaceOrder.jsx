@@ -53,7 +53,7 @@ const PlaceOrder = () => {
       }
   
       let orderData = {
-        address: `${formData.street}, ${formData.city}, ${formData.state}, ${formData.zipcode}, ${formData.country}`,
+        address: `${formData.firstName}, ${formData.lastName}, ${formData.email}, ${formData.street}, ${formData.city}, ${formData.state}, ${formData.zipcode}, ${formData.country}, ${formData.phone},`,
         items: orderItems,
         amount: getCartAmount() + delivery_free,
         paymentMethod: method,

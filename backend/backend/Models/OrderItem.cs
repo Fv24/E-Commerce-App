@@ -13,5 +13,6 @@ namespace backend.Models
 
             [JsonIgnore]
             public Order? Order { get; set; }
+            public Product? Product { get; set; }
     }
 }

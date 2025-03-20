@@ -16,11 +16,11 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Dashboard from './pages/admin/Dashboard';
 import AddProduct from './pages/admin/products/AddProduct';
-import ListOrders from './pages/admin/ListOrders';
 import UpdateProduct from './pages/admin/products/UpdateProduct';
 import ListProducts from './pages/admin/products/ListProducts';
 import PrivateRoute from './components/PrivateRoute';
 import UserDetails from './pages/admin/users/UserDetails';
+import ListOrders from './pages/admin/orders/ListOrders';
 
 const App = () => {
 
