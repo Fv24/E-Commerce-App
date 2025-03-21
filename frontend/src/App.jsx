@@ -21,6 +21,7 @@ import ListProducts from './pages/admin/products/ListProducts';
 import PrivateRoute from './components/PrivateRoute';
 import UserDetails from './pages/admin/users/UserDetails';
 import ListOrders from './pages/admin/orders/ListOrders';
+import Verify from './pages/Verify';
 
 const App = () => {
 
@@ -39,6 +40,7 @@ const App = () => {
         <Route path='/login' element={<Login />} />
         <Route path='/place-order' element={<PlaceOrder />} />
         <Route path='/orders' element={<Orders />} />
+        <Route path='/success' element={<Verify />} />
 
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>}>
           <Route path="addProduct" element={<AddProduct />} />

@@ -60,20 +60,42 @@ const PlaceOrder = () => {
         payment: method !== "cod", // If it's not "cod", set payment to true else false
       };
   
-      const response = await axios.post('http://localhost:5189/api/Order/PlaceOrder', orderData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-  
-      if (response.data.success) {
-        setCartItems([]);
-        setFormData({});
-        navigate('/orders');
-      } else {
-        toast.error(response.data.message);
-      }
+      switch(method){
 
+        case 'cod':
+        const response = await axios.post('http://localhost:5189/api/Order/PlaceOrder', orderData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+    
+        if (response.data.success) {
+          setCartItems([]);
+          setFormData({});
+          navigate('/orders');
+        } else {
+          toast.error(response.data.message);
+        }
+        break;
+
+        case 'stripe':
+          const responseStripe = await axios.post('http://localhost:5189/api/Order/PlaceOrderSTRIPE', orderData, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (responseStripe.data.success) {
+              const {session_url} = responseStripe.data
+              window.location.replace(session_url);
+          } else {
+            toast.error(response.data.message);
+          }
+        break;
+
+        default: 
+        break;
+      }
     } catch (error) {
       console.error('Error during order submission:', error);
       toast.error('An error occurred during order submission.');

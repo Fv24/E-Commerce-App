@@ -93,6 +93,8 @@ const ListOrders = () => {
               <option value="Shipped">Shipped</option>
               <option value="Out for delivery">Out for delivery</option>
               <option value="Delivered">Delivered</option>
+              <option value="Paid">Paid</option>
+              <option value="Canceled">Canceled</option>
             </select>
           </div>
         ))}
