@@ -269,6 +269,7 @@ namespace backend.Controllers
             }
         }
 
+        //Verify Payment
         [Authorize]
         [HttpPost("VerifyStripePayment")]
         public async Task<IActionResult> VerifyStripePayment([FromBody] VerifyStripeRequestDTO request)
@@ -355,42 +356,5 @@ namespace backend.Controllers
                 return StatusCode(500, new { success = false, message = "Error verifying payment.", error = ex.Message });
             }
         }
-
-
-
-
-
-        // Place Order with PayPal
-        [HttpPost("PlaceOrderPayPal")]
-        public ActionResult<Order> PlaceOrderPayPal([FromBody] Order order)
-        {
-            // Handle PayPal payment logic (e.g., payment gateway integration)
-            order.PaymentMethod = "PayPal";
-            order.Payment = true; // Assume successful payment
-            order.Date = DateTime.Now;
-
-            // Add the order to the database
-            _dbContext.Orders.Add(order);
-            _dbContext.SaveChanges();
-
-            return CreatedAtAction(nameof(GetOrderById), new { id = order.Id }, order);
-        }
-
-       
-
-
-   
-
-        // Get an order by its ID
-        [HttpGet("{id}")]
-        public ActionResult<Order> GetOrderById(int id)
-        {
-            var order = _dbContext.Orders.FirstOrDefault(o => o.Id == id);
-            if (order == null)
-                return NotFound("Order not found.");
-            return Ok(order);
-        }
-
-
     }
 }
